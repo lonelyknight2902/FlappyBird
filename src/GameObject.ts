@@ -30,6 +30,9 @@ export class GameObject {
         position.y += (direction.y * speed * updateInput.delta) / 1000
         colliderPosition.x = position.x
         colliderPosition.y = position.y
+    }
+
+    public updateGravity(updateInput: UpdateInput): void {
         if (this.bodyType === BodyType.RIGID_BODY) {
             this.velocity.setSpeed(
                 this.velocity.getSpeed() + (GRAVITAIONAL_ACCELERATION * updateInput.delta) / 1000

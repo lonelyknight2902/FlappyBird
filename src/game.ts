@@ -70,6 +70,8 @@ export class Game {
                 this.player.handleCollision(updateInput, base.collider)
             }
         }
+
+        this.player.updateGravity(updateInput)
     }
 
     render(): void {
