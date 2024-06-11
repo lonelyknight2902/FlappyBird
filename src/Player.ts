@@ -5,6 +5,7 @@ class Player extends GameObject {
     private spriteSource: string
     constructor() {
         super()
+        console.log(this.velocity)
         console.log('Player created')
     }
 }

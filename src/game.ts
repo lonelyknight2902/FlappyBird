@@ -1,4 +1,3 @@
-import Renderer from './Renderer'
 import Player from './Player'
 import UpdateInput from './types/update'
 import Canvas from './Canvas'
@@ -13,7 +12,7 @@ export class Game {
     constructor() {
         console.log('Game created')
         this.player = new Player()
-        this.player.setVelocity(0, new Vector2(1, 1))
+        this.player.setSpeed(50)
         this.canvas = new Canvas(800, 600)
         this.inputHandler = new InputHandler()
         this.lastTime = window.performance.now()
@@ -21,34 +20,25 @@ export class Game {
     }
 
     processInput(): void {
-        console.log('Processing input')
-        let xSpeed = 0
-        let ySpeed = 0
-        if(this.inputHandler.isKeyDown('ArrowUp')) {
-            console.log('ArrowUp is pressed')
-            ySpeed = -1
-        } else if(this.inputHandler.isKeyDown('ArrowDown')) {
-            console.log('ArrowDown is pressed')
-            ySpeed = 1
-        } else {
-            ySpeed = 0
+        let xDirection = 0
+        let yDirection = 0
+        if (this.inputHandler.isKeyDown('ArrowUp')) {
+            yDirection = -1
+        } else if (this.inputHandler.isKeyDown('ArrowDown')) {
+            yDirection = 1
         }
-        if(this.inputHandler.isKeyDown('ArrowLeft')) {
-            console.log('ArrowLeft is pressed')
-            xSpeed = -1
-        } else if(this.inputHandler.isKeyDown('ArrowRight')) {
-            console.log('ArrowRight is pressed')
-            xSpeed = 1
-        } else {
-            xSpeed = 0
+        if (this.inputHandler.isKeyDown('ArrowLeft')) {
+            xDirection = -1
+        } else if (this.inputHandler.isKeyDown('ArrowRight')) {
+            xDirection = 1
         }
-
-        this.player.setVelocity(1, new Vector2(xSpeed, ySpeed))
+        this.player.setDirection(new Vector2(xDirection, yDirection))
+        // this.player.setVelocity(5, new Vector2(xDirection, yDirection))
     }
 
     update(updateInput: UpdateInput): void {
         // console.log('Updating game')
-        this.player.update()
+        this.player.update(updateInput)
     }
 
     render(): void {
@@ -59,6 +49,7 @@ export class Game {
     loop(): void {
         const time = window.performance.now()
         const delta = time - this.lastTime
+        console.log(delta)
         this.processInput()
         this.update({ time, delta })
         this.render()

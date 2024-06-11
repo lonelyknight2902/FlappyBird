@@ -1,20 +1,21 @@
 import Vector2 from './Vector2'
+import UpdateInput from './types/update'
 
 export class GameObject {
     protected transform: Transform
     protected velocity: Velocity
     constructor() {
         this.transform = new Transform(500, 500, 0, 1)
-        this.velocity = new Velocity(0, new Vector2(0, 0))
+        this.velocity = new Velocity()
     }
 
-    public update(): void {
-        let position = this.transform.getPosition()
-        let direction = this.velocity.getDirection()
+    public update(updateInput: UpdateInput): void {
+        const position = this.transform.getPosition()
+        const direction = this.velocity.getDirection()
         direction.normalize()
-        let speed = this.velocity.getSpeed()
-        position.x += direction.x * speed
-        position.y += direction.y * speed
+        const speed = this.velocity.getSpeed()
+        position.x += direction.x * speed * updateInput.delta / 1000
+        position.y += direction.y * speed * updateInput.delta / 1000
     }
 
     public setPosition(x: number, y: number): void {
@@ -26,14 +27,21 @@ export class GameObject {
         this.velocity.setDirection(direction)
     }
 
+    public setSpeed(speed: number): void {
+        this.velocity.setSpeed(speed)
+    }
+
+    public setDirection(direction: Vector2): void {
+        this.velocity.setDirection(direction)
+    }
+
     public render(canvas: HTMLCanvasElement) {
         const ctx = canvas.getContext('2d')
         if (ctx === null) {
             return
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        let position = this.transform.getPosition()
-        console.log(position.x, position.y)
+        const position = this.transform.getPosition()
         ctx.fillRect(position.x, position.y, 150, 100)
         ctx.fillStyle = 'red'
     }
@@ -41,8 +49,8 @@ export class GameObject {
 
 class Transform {
     private position: Vector2
-    private rotation: number = 0
-    private scale: number = 1
+    private rotation: number
+    private scale: number
     constructor(positionX: number, positionY: number, rotation: number, scale: number) {
         this.position = new Vector2(positionX, positionY)
         this.rotation = rotation
@@ -60,9 +68,9 @@ class Transform {
 }
 
 class Velocity {
-    private speed: number = 0
-    private direction: Vector2 = new Vector2(0, 0)
-    constructor(speed: number, direction: Vector2) {
+    private speed: number
+    private direction: Vector2
+    constructor(speed = 0, direction = Vector2.zero) {
         this.speed = speed
         this.direction = direction
     }
