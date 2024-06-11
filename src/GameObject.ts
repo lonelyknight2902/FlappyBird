@@ -1,21 +1,24 @@
 import { BoxCollider, Collider } from './Collider'
 import Transform from './Transform'
 import Vector2 from './Vector2'
+import { BodyType, GRAVITAIONAL_ACCELERATION } from './constants'
 import UpdateInput from './types/update'
 
 export class GameObject {
     protected transform: Transform
     protected velocity: Velocity
     public collider: Collider
-    constructor() {
+    public bodyType: BodyType
+    constructor(width: number, height: number, bodyType: BodyType) {
         this.transform = new Transform(0, 0, 0, 1)
         this.velocity = new Velocity()
         this.collider = new BoxCollider(
-            150,
-            100,
+            width,
+            height,
             this.transform.getPosition().x,
             this.transform.getPosition().y
         )
+        this.bodyType = bodyType
     }
 
     public update(updateInput: UpdateInput): void {
@@ -27,6 +30,12 @@ export class GameObject {
         position.y += (direction.y * speed * updateInput.delta) / 1000
         colliderPosition.x = position.x
         colliderPosition.y = position.y
+        if (this.bodyType === BodyType.RIGID_BODY) {
+            this.velocity.setSpeed(
+                this.velocity.getSpeed() + (GRAVITAIONAL_ACCELERATION * updateInput.delta) / 1000
+            )
+            console.log('Speed:', this.velocity.getSpeed())
+        }
     }
 
     public handleCollision(updateInput: UpdateInput, other: Collider): void {
@@ -40,13 +49,13 @@ export class GameObject {
             colliderPosition.x >= otherPosition.x ||
             colliderPosition.x <= otherPosition.x + other.width
         ) {
-            position.x -= speed * direction.x * updateInput.delta / 1000
-        } 
+            position.x -= (speed * direction.x * updateInput.delta) / 1000
+        }
         if (
             colliderPosition.y >= otherPosition.y ||
             colliderPosition.y <= otherPosition.y + other.height
         ) {
-            position.y -= speed * direction.y * updateInput.delta / 1000
+            position.y -= (speed * direction.y * updateInput.delta) / 1000
         }
     }
 

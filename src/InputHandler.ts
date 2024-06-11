@@ -3,11 +3,22 @@ class InputHandler {
 
     constructor() {
         window.addEventListener('keydown', (e) => {
-            this._keys[e.key] = true
+            e.preventDefault()
+            console.log(e.key)
+            if (e.key === ' ') {
+                this._keys['Space'] = true
+            } else {
+                this._keys[e.key] = true
+            }
         })
 
         window.addEventListener('keyup', (e) => {
-            this._keys[e.key] = false
+            e.preventDefault()
+            if (e.key === ' ') {
+                this._keys['Space'] = false
+            } else {
+                this._keys[e.key] = false
+            }
         })
     }
 
