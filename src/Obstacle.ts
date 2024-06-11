@@ -14,7 +14,7 @@ class Obstacle extends GameObject {
 
     render(ctx: CanvasRenderingContext2D): void {
         const position = this.transform.getPosition()
-        ctx.drawImage(this.sprite, position.x, position.y, 150, 100)
+        ctx.drawImage(this.sprite, position.x, position.y, 104, 640)
     }
 }
 
