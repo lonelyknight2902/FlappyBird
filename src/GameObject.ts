@@ -37,12 +37,12 @@ export class GameObject {
             this.velocity.setSpeed(
                 this.velocity.getSpeed() + (GRAVITAIONAL_ACCELERATION * updateInput.delta) / 1000
             )
-            console.log('Speed:', this.velocity.getSpeed())
+            // console.log('Speed:', this.velocity.getSpeed())
         }
     }
 
     public handleCollision(updateInput: UpdateInput, other: Collider): void {
-        console.log('Collision detected')
+        // console.log('Collision detected')
         const position = this.transform.getPosition()
         const speed = this.velocity.getSpeed()
         const direction = this.velocity.getDirection().normalize()
@@ -65,6 +65,10 @@ export class GameObject {
     public setPosition(x: number, y: number): void {
         this.transform.setPosition(x, y)
         this.collider.transform.setPosition(x, y)
+    }
+
+    public getPosition(): Vector2 {
+        return this.transform.getPosition()
     }
 
     public setVelocity(speed: number, direction: Vector2): void {

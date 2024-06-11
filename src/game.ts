@@ -6,7 +6,7 @@ import InputHandler from './InputHandler'
 import Obstacle from './Obstacle'
 import Vector2 from './Vector2'
 import Base from './Base'
-import { BodyType } from './constants'
+import { BASE_SPEED, BodyType } from './constants'
 
 export class Game {
     public player: Player
@@ -24,9 +24,14 @@ export class Game {
         const obstacle = new Obstacle()
         obstacle.setPosition(170, 200)
         this.obstacles = [obstacle]
-        const base = new Base(450, 150, BodyType.STATIC_BODY)
-        base.setPosition(0, 650)
-        this.bases = [base]
+        this.bases = []
+        for (let i = 0; i < 3; i++) {
+            const base = new Base(450, 150, BodyType.STATIC_BODY)
+            base.setPosition(i * 450, 650)
+            this.bases.push(base)
+            base.setSpeed(BASE_SPEED)
+            base.setDirection(new Vector2(-1, 0))
+        }
         this.inputHandler = new InputHandler()
         this.lastTime = window.performance.now()
         requestAnimationFrame(() => this.loop())
@@ -57,6 +62,20 @@ export class Game {
     update(updateInput: UpdateInput): void {
         // console.log('Updating game')
         this.player.update(updateInput)
+        this.bases.forEach((base) => {
+            base.update(updateInput)
+        })
+        if (this.bases[0].getPosition().x + this.bases[0].getWidth() < 0) {
+            console.log('Shifting base')
+            this.bases.shift()
+            const base = new Base(450, 150, BodyType.STATIC_BODY)
+            const lastBase = this.bases[this.bases.length - 1]
+            base.setPosition(lastBase.getPosition().x + lastBase.getWidth(), 650)
+            base.setSpeed(BASE_SPEED)
+            base.setDirection(new Vector2(-1, 0))
+            this.bases.push(base)
+            console.log(this.bases)
+        }
         for (const obstacle of this.obstacles) {
             if (this.player.collider.checkCollision(obstacle.collider)) {
                 console.log('Collision detected')
@@ -68,6 +87,7 @@ export class Game {
             if (this.player.collider.checkCollision(base.collider)) {
                 console.log('Collision detected')
                 this.player.handleCollision(updateInput, base.collider)
+                this.player.setSpeed(0)
             }
         }
 

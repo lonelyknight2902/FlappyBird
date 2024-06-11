@@ -4,3 +4,4 @@ export enum BodyType {
   RIGID_BODY = 'RIGID_BODY',
   STATIC_BODY = 'STATIC_BODY',
 }
+export const BASE_SPEED = 300

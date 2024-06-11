@@ -19,6 +19,14 @@ class Base extends GameObject {
         const position = this.transform.getPosition()
         ctx.drawImage(this.sprite, position.x, position.y, this.width, this.height)
     }
+
+    public getWidth(): number {
+        return this.width
+    }
+
+    public getHeight(): number {
+        return this.height
+    }
 }
 
 export default Base
