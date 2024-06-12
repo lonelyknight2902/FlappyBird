@@ -7,6 +7,8 @@ import Obstacle from './Obstacle'
 import Vector2 from './Vector2'
 import Base from './Base'
 import { BASE_SPEED, BodyType } from './constants'
+import { GameState } from './types/state'
+import { GameStartState } from './State'
 
 export class Game {
     public player: Player
@@ -14,17 +16,20 @@ export class Game {
     public bases: Base[]
     private lastTime: number
     private canvas: Canvas
-    private inputHandler: InputHandler
+    public inputHandler: InputHandler
+    public state: GameState
     constructor() {
         console.log('Game created')
         this.player = new Player()
         this.player.setSpeed(300)
         this.player.setDirection(new Vector2(0, 1))
+        this.player.setPosition(75, 300)
         this.canvas = new Canvas(450, 800)
         const obstacle = new Obstacle()
         obstacle.setPosition(170, 200)
         this.obstacles = [obstacle]
         this.bases = []
+        this.state = new GameStartState()
         for (let i = 0; i < 3; i++) {
             const base = new Base(450, 150, BodyType.STATIC_BODY)
             base.setPosition(i * 450, 650)
@@ -50,10 +55,9 @@ export class Game {
         // } else if (this.inputHandler.isKeyDown('ArrowRight')) {
         //     xDirection = 1
         // }
-
-        if (this.inputHandler.isKeyDown('Space')) {
-            console.log('Flap')
-            this.player.flap()
+        const newState = this.state.handleInput(this)
+        if (newState !== null) {
+            this.state = newState
         }
         // this.player.setDirection(new Vector2(xDirection, yDirection))
         // this.player.setVelocity(5, new Vector2(xDirection, yDirection))
@@ -61,37 +65,7 @@ export class Game {
 
     update(updateInput: UpdateInput): void {
         // console.log('Updating game')
-        this.player.update(updateInput)
-        this.bases.forEach((base) => {
-            base.update(updateInput)
-        })
-        if (this.bases[0].getPosition().x + this.bases[0].getWidth() < 0) {
-            console.log('Shifting base')
-            this.bases.shift()
-            const base = new Base(450, 150, BodyType.STATIC_BODY)
-            const lastBase = this.bases[this.bases.length - 1]
-            base.setPosition(lastBase.getPosition().x + lastBase.getWidth(), 650)
-            base.setSpeed(BASE_SPEED)
-            base.setDirection(new Vector2(-1, 0))
-            this.bases.push(base)
-            console.log(this.bases)
-        }
-        for (const obstacle of this.obstacles) {
-            if (this.player.collider.checkCollision(obstacle.collider)) {
-                console.log('Collision detected')
-                this.player.handleCollision(updateInput, obstacle.collider)
-            }
-        }
-
-        for (const base of this.bases) {
-            if (this.player.collider.checkCollision(base.collider)) {
-                console.log('Collision detected')
-                this.player.handleCollision(updateInput, base.collider)
-                this.player.setSpeed(0)
-            }
-        }
-
-        this.player.updateGravity(updateInput)
+        this.state.update(this, updateInput)
     }
 
     render(): void {
