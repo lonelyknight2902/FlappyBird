@@ -1,6 +1,3 @@
-import Base from './Base'
-import Vector2 from './Vector2'
-import { BASE_SPEED, BodyType } from './constants'
 import { Game } from './game'
 import { GameState } from './types/state'
 import UpdateInput from './types/update'
@@ -31,23 +28,32 @@ export class GamePlayState implements GameState {
     }
 
     update(game: Game, updateInput: UpdateInput): void {
-      game.player.update(updateInput)
+        game.player.update(updateInput)
         game.bases.forEach((base) => {
             base.update(updateInput)
         })
+        game.obstacles.forEach((obstacle) => {
+            obstacle[0].update(updateInput)
+            obstacle[1].update(updateInput)
+        })
         game.baseSpawner()
+        game.obstacleSpawner()
         for (const obstacle of game.obstacles) {
-            if (game.player.collider.checkCollision(obstacle.collider)) {
+            if (game.player.collider.checkCollision(obstacle[0].collider)) {
                 console.log('Collision detected')
-                game.player.handleCollision(updateInput, obstacle.collider)
+                game.player.handleCollision(updateInput, obstacle[0].collider)
+                game.state = new GameOverState()
+            } else if (game.player.collider.checkCollision(obstacle[1].collider)) {
+                console.log('Collision detected')
+                // game.player.handleCollision(updateInput, obstacle[1].collider)
                 game.state = new GameOverState()
             }
         }
- 
+
         for (const base of game.bases) {
             if (game.player.collider.checkCollision(base.collider)) {
                 console.log('Collision detected')
-                game.player.handleCollision(updateInput, base.collider)
+                // game.player.handleCollision(updateInput, base.collider)
                 game.player.setSpeed(0)
                 game.state = new GameOverState()
             }
@@ -61,6 +67,7 @@ export class GameOverState {
     handleInput(game: Game): GameState | null {
         if (game.inputHandler.isKeyDown('Space')) {
             game.player.setPosition(75, 300)
+            game.obstacleInit()
             return new GameStartState()
         }
         return null

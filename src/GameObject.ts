@@ -89,6 +89,10 @@ export class GameObject {
         ctx.fillRect(position.x, position.y, 150, 100)
         ctx.fillStyle = 'red'
     }
+
+    public setCollider(width: number, height: number, x: number, y: number): void {
+        this.collider = new BoxCollider(width, height, x, y)
+    }
 }
 
 class Velocity {

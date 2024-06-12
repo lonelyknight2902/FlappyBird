@@ -6,13 +6,20 @@ import InputHandler from './InputHandler'
 import Obstacle from './Obstacle'
 import Vector2 from './Vector2'
 import Base from './Base'
-import { BASE_SPEED, BodyType } from './constants'
+import {
+    BASE_SPEED,
+    BodyType,
+    PIPE_DISTANCE,
+    PIPE_FLIP_SOURCE,
+    PIPE_GAP,
+    PIPE_SOURCE,
+} from './constants'
 import { GameState } from './types/state'
 import { GameStartState } from './State'
 
 export class Game {
     public player: Player
-    public obstacles: Obstacle[]
+    public obstacles: Obstacle[][]
     public bases: Base[]
     private lastTime: number
     private canvas: Canvas
@@ -25,9 +32,7 @@ export class Game {
         this.player.setDirection(new Vector2(0, 1))
         this.player.setPosition(75, 300)
         this.canvas = new Canvas(450, 800)
-        const obstacle = new Obstacle()
-        obstacle.setPosition(170, 200)
-        this.obstacles = [obstacle]
+        this.obstacleInit()
         this.bases = []
         this.state = new GameStartState()
         for (let i = 0; i < 3; i++) {
@@ -79,7 +84,8 @@ export class Game {
         this.canvas.renderBackground()
         this.player.render(ctx)
         this.obstacles.forEach((obstacle) => {
-            obstacle.render(ctx)
+            obstacle[0].render(ctx)
+            obstacle[1].render(ctx)
         })
         this.bases.forEach((base) => {
             base.render(ctx)
@@ -95,6 +101,46 @@ export class Game {
         this.render()
         this.lastTime = time
         requestAnimationFrame(() => this.loop())
+    }
+
+    obstacleInit(): void {
+        this.obstacles = []
+        for (let i = 0; i < 3; i++) {
+            const obstacle = new Obstacle(104, 640, PIPE_SOURCE, BodyType.STATIC_BODY)
+            const randomY = Math.floor(Math.random() * 300) + 200
+            obstacle.setPosition(450 + PIPE_DISTANCE * i, randomY)
+            const invertedObstacle = new Obstacle(104, 640, PIPE_FLIP_SOURCE, BodyType.STATIC_BODY)
+            invertedObstacle.setPosition(
+                450 + PIPE_DISTANCE * i,
+                randomY - invertedObstacle.getHeight() - PIPE_GAP
+            )
+            this.obstacles.push([obstacle, invertedObstacle])
+            obstacle.setSpeed(BASE_SPEED)
+            obstacle.setDirection(new Vector2(-1, 0))
+            invertedObstacle.setSpeed(BASE_SPEED)
+            invertedObstacle.setDirection(new Vector2(-1, 0))
+        }
+    }
+
+    obstacleSpawner(): void {
+        console.log(this.obstacles)
+        if (this.obstacles[0][0].getPosition().x + this.obstacles[0][0].getWidth() < 0) {
+            this.obstacles.shift()
+            const obstacle = new Obstacle(104, 640, PIPE_SOURCE, BodyType.STATIC_BODY)
+            const invertedObstacle = new Obstacle(104, 640, PIPE_FLIP_SOURCE, BodyType.STATIC_BODY)
+            const lastObstacle = this.obstacles[this.obstacles.length - 1]
+            const randomY = Math.floor(Math.random() * 250) + 200
+            obstacle.setPosition(lastObstacle[0].getPosition().x + PIPE_DISTANCE, randomY)
+            invertedObstacle.setPosition(
+                lastObstacle[1].getPosition().x + PIPE_DISTANCE,
+                randomY - invertedObstacle.getHeight() - PIPE_GAP
+            )
+            obstacle.setSpeed(BASE_SPEED)
+            obstacle.setDirection(new Vector2(-1, 0))
+            invertedObstacle.setSpeed(BASE_SPEED)
+            invertedObstacle.setDirection(new Vector2(-1, 0))
+            this.obstacles.push([obstacle, invertedObstacle])
+        }
     }
 
     baseSpawner(): void {
