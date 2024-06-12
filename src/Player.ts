@@ -44,6 +44,7 @@ class Player extends GameObject {
     flap(): void {
         console.log('Flap')
         this.setSpeed(-FLAP_FORCE)
+        this._flapAudio.currentTime = 0
         this._flapAudio.play()
     }
 }
