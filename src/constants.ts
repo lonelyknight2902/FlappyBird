@@ -1,10 +1,11 @@
 export const GRAVITAIONAL_ACCELERATION = 900
-export const FLAP_FORCE = 300
+export const FLAP_FORCE = 200
 export enum BodyType {
     RIGID_BODY = 'RIGID_BODY',
     STATIC_BODY = 'STATIC_BODY',
 }
 export const BASE_SPEED = 200
+export const PIPE_STARTING_OFFSET = 900
 export const PIPE_DISTANCE = 400
 export const PIPE_GAP = 200
 export const PIPE_SOURCE = 'assets/images/pipe-green.png'
