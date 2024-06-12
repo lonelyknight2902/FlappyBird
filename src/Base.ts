@@ -8,7 +8,6 @@ class Base extends GameObject {
     private height: number
     constructor(width: number, height: number, bodyType: BodyType) {
         super(width, height, bodyType)
-        console.log('Base created')
         this.sprite = document.createElement('img')
         this.spriteSource = 'assets/images/base.png'
         this.sprite.src = this.spriteSource

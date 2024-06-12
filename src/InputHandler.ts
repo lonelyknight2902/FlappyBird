@@ -4,7 +4,6 @@ class InputHandler {
     constructor() {
         window.addEventListener('keydown', (e) => {
             e.preventDefault()
-            console.log(e.key)
             if (e.key === ' ') {
                 this._keys['Space'] = true
             } else {
