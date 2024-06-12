@@ -51,33 +51,17 @@ export class Game {
     }
 
     processInput(): void {
-        // let xDirection = 0
-        // let yDirection = 0
-        // if (this.inputHandler.isKeyDown('ArrowUp')) {
-        //     yDirection = -1
-        // } else if (this.inputHandler.isKeyDown('ArrowDown')) {
-        //     yDirection = 1
-        // }
-        // if (this.inputHandler.isKeyDown('ArrowLeft')) {
-        //     xDirection = -1
-        // } else if (this.inputHandler.isKeyDown('ArrowRight')) {
-        //     xDirection = 1
-        // }
         const newState = this.state.handleInput(this)
         if (newState !== null) {
             this.state = newState
         }
-        // this.player.setDirection(new Vector2(xDirection, yDirection))
-        // this.player.setVelocity(5, new Vector2(xDirection, yDirection))
     }
 
     update(updateInput: UpdateInput): void {
-        // console.log('Updating game')
         this.state.update(this, updateInput)
     }
 
     render(): void {
-        // console.log('Rendering game')
         const canvas = this.canvas.canvas
         const ctx = canvas.getContext('2d')
         if (ctx === null) {
@@ -98,7 +82,6 @@ export class Game {
     loop(): void {
         const time = window.performance.now()
         const delta = time - this.lastTime
-        // console.log(delta)
         this.processInput()
         this.update({ time, delta })
         this.render()
