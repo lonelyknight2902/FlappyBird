@@ -13,12 +13,15 @@ export class GameStartState implements GameState {
         return null
     }
 
-    update(game: Game, updateInput: UpdateInput): void {}
+    update(game: Game, updateInput: UpdateInput): void {
+        game.bases.forEach((base) => {
+            base.update(updateInput)
+        })
+        game.baseSpawner()
+    }
 }
 
 export class GamePlayState implements GameState {
-    GamePlayState() {}
-
     handleInput(game: Game): GameState | null {
         if (game.inputHandler.isKeyDown('Space')) {
             game.player.flap()
@@ -32,17 +35,7 @@ export class GamePlayState implements GameState {
         game.bases.forEach((base) => {
             base.update(updateInput)
         })
-        if (game.bases[0].getPosition().x + game.bases[0].getWidth() < 0) {
-            console.log('Shifting base')
-            game.bases.shift()
-            const base = new Base(450, 150, BodyType.STATIC_BODY)
-            const lastBase = game.bases[game.bases.length - 1]
-            base.setPosition(lastBase.getPosition().x + lastBase.getWidth(), 650)
-            base.setSpeed(BASE_SPEED)
-            base.setDirection(new Vector2(-1, 0))
-            game.bases.push(base)
-            console.log(game.bases)
-        }
+        game.baseSpawner()
         for (const obstacle of game.obstacles) {
             if (game.player.collider.checkCollision(obstacle.collider)) {
                 console.log('Collision detected')

@@ -96,6 +96,20 @@ export class Game {
         this.lastTime = time
         requestAnimationFrame(() => this.loop())
     }
+
+    baseSpawner(): void {
+        if (this.bases[0].getPosition().x + this.bases[0].getWidth() < 0) {
+            console.log('Shifting base')
+            this.bases.shift()
+            const base = new Base(450, 150, BodyType.STATIC_BODY)
+            const lastBase = this.bases[this.bases.length - 1]
+            base.setPosition(lastBase.getPosition().x + lastBase.getWidth(), 650)
+            base.setSpeed(BASE_SPEED)
+            base.setDirection(new Vector2(-1, 0))
+            this.bases.push(base)
+            console.log(this.bases)
+        }
+    }
 }
 
 new Game()
