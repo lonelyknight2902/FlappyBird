@@ -1,5 +1,5 @@
 import { GameObject } from './GameObject'
-import { BodyType, FLAP_AUDIO, FLAP_FORCE } from './constants'
+import { BodyType, FLAP_AUDIO, FLAP_FORCE, FLAP_RATE } from './constants'
 
 class Player extends GameObject {
     private _sprite: HTMLImageElement
@@ -31,7 +31,7 @@ class Player extends GameObject {
 
     render(ctx: CanvasRenderingContext2D): void {
         this._frameCount++
-        if (this._frameCount > 15) {
+        if (this._frameCount > FLAP_RATE) {
             this._frameCount = 0
             this._currentFrame++
             if (this._currentFrame > 3) this._currentFrame = 0
@@ -42,7 +42,6 @@ class Player extends GameObject {
     }
 
     flap(): void {
-        console.log('Flap')
         this.setSpeed(-FLAP_FORCE)
         this._flapAudio.currentTime = 0
         this._flapAudio.play()
