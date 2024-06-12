@@ -18,9 +18,12 @@ import {
 import { GameState } from './types/state'
 import { GameStartState } from './State'
 import TextElement from './TextElement'
+import TriggerObject from './TriggerOject'
+import ScoreManager from './ScoreManager'
 
 export class Game {
     public player: Player
+    public scoreManager: ScoreManager
     public obstacles: Obstacle[][]
     public bases: Base[]
     private lastTime: number
@@ -30,18 +33,67 @@ export class Game {
     public hitAudio: HTMLAudioElement
     public gameTitle: TextElement
     public gameOverTitle: TextElement
+    public scoreText: TextElement
+    public finalScoreText: TextElement
+    public highScoreText: TextElement
+    public triggerAreas: TriggerObject[]
     constructor() {
         console.log('Game created')
         this.player = new Player()
         this.player.setSpeed(300)
         this.player.setDirection(new Vector2(0, 1))
         this.player.setPosition(75, 300)
+        this.scoreManager = new ScoreManager()
         this.canvas = new Canvas(450, 800)
-        this.gameTitle = new TextElement(this.canvas.canvas.width / 2, 200, 'Flappy Bird', 'Arial', 50, 'bold', true)
-        this.gameOverTitle = new TextElement(this.canvas.canvas.width / 2, 200, 'Game Over', 'Arial', 50, 'bold', true)
+        this.gameTitle = new TextElement(
+            this.canvas.canvas.width / 2,
+            200,
+            'Flappy Bird',
+            'Courier New',
+            50,
+            'bold',
+            true
+        )
+        this.gameOverTitle = new TextElement(
+            this.canvas.canvas.width / 2,
+            200,
+            'Game Over',
+            'Courier New',
+            50,
+            'bold',
+            true
+        )
+        this.scoreText = new TextElement(
+            this.canvas.canvas.width / 2,
+            200,
+            this.scoreManager.score.toString(),
+            'Courier New',
+            40,
+            'bold',
+            true
+        )
+        this.finalScoreText = new TextElement(
+            this.canvas.canvas.width / 2,
+            300,
+            'Final Score: ' + this.scoreManager.score.toString(),
+            'Courier New',
+            40,
+            'bold',
+            true
+        )
+        this.highScoreText = new TextElement(
+            this.canvas.canvas.width / 2,
+            350,
+            'High Score: ' + this.scoreManager.highScore.toString(),
+            'Courier New',
+            20,
+            'bold',
+            true
+        )
         this.obstacleInit()
         this.bases = []
         this.state = new GameStartState()
+        this.state.enter(this)
         for (let i = 0; i < 3; i++) {
             const base = new Base(450, 150, BodyType.STATIC_BODY)
             base.setPosition(i * 450, 650)
@@ -60,6 +112,7 @@ export class Game {
         const newState = this.state.handleInput(this)
         if (newState !== null) {
             this.state = newState
+            this.state.enter(this)
         }
     }
 
@@ -83,6 +136,7 @@ export class Game {
 
     obstacleInit(): void {
         this.obstacles = []
+        this.triggerAreas = []
         for (let i = 0; i < 3; i++) {
             const obstacle = new Obstacle(104, 640, PIPE_SOURCE, BodyType.STATIC_BODY)
             const randomY = Math.floor(Math.random() * 300) + 200
@@ -92,17 +146,28 @@ export class Game {
                 PIPE_STARTING_OFFSET + PIPE_DISTANCE * i,
                 randomY - invertedObstacle.getHeight() - PIPE_GAP
             )
+            console.log(PIPE_STARTING_OFFSET + PIPE_DISTANCE * i)
+            const trigger = new TriggerObject(
+                104,
+                PIPE_GAP,
+                PIPE_STARTING_OFFSET + PIPE_DISTANCE * i,
+                randomY - PIPE_GAP
+            )
             this.obstacles.push([obstacle, invertedObstacle])
+            this.triggerAreas.push(trigger)
             obstacle.setSpeed(BASE_SPEED)
             obstacle.setDirection(new Vector2(-1, 0))
             invertedObstacle.setSpeed(BASE_SPEED)
             invertedObstacle.setDirection(new Vector2(-1, 0))
+            trigger.setSpeed(BASE_SPEED)
+            trigger.setDirection(new Vector2(-1, 0))
         }
     }
 
     obstacleSpawner(): void {
         if (this.obstacles[0][0].getPosition().x + this.obstacles[0][0].getWidth() < 0) {
             this.obstacles.shift()
+            this.triggerAreas.shift()
             const obstacle = new Obstacle(104, 640, PIPE_SOURCE, BodyType.STATIC_BODY)
             const invertedObstacle = new Obstacle(104, 640, PIPE_FLIP_SOURCE, BodyType.STATIC_BODY)
             const lastObstacle = this.obstacles[this.obstacles.length - 1]
@@ -112,17 +177,25 @@ export class Game {
                 lastObstacle[1].getPosition().x + PIPE_DISTANCE,
                 randomY - invertedObstacle.getHeight() - PIPE_GAP
             )
+            const trigger = new TriggerObject(
+                104,
+                PIPE_GAP,
+                lastObstacle[1].getPosition().x + PIPE_DISTANCE,
+                randomY - PIPE_GAP
+            )
             obstacle.setSpeed(BASE_SPEED)
             obstacle.setDirection(new Vector2(-1, 0))
             invertedObstacle.setSpeed(BASE_SPEED)
             invertedObstacle.setDirection(new Vector2(-1, 0))
+            trigger.setSpeed(BASE_SPEED)
+            trigger.setDirection(new Vector2(-1, 0))
             this.obstacles.push([obstacle, invertedObstacle])
+            this.triggerAreas.push(trigger)
         }
     }
 
     baseSpawner(): void {
         if (this.bases[0].getPosition().x + this.bases[0].getWidth() < 0) {
-            console.log('Shifting base')
             this.bases.shift()
             const base = new Base(450, 150, BodyType.STATIC_BODY)
             const lastBase = this.bases[this.bases.length - 1]
@@ -130,7 +203,6 @@ export class Game {
             base.setSpeed(BASE_SPEED)
             base.setDirection(new Vector2(-1, 0))
             this.bases.push(base)
-            console.log(this.bases)
         }
     }
 }
