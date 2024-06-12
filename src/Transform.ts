@@ -18,6 +18,14 @@ class Transform {
       this.position.x = x
       this.position.y = y
   }
+
+    public getRotation(): number {
+        return this.rotation
+    }
+
+    public setRotation(rotation: number): void {
+        this.rotation = rotation
+    }
 }
 
 export default Transform

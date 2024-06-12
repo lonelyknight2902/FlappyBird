@@ -4,6 +4,8 @@ export enum BodyType {
     RIGID_BODY = 'RIGID_BODY',
     STATIC_BODY = 'STATIC_BODY',
 }
+export const CANVAS_WIDTH = 450
+export const CANVAS_HEIGHT = 800
 export const FLAP_RATE = 5
 export const BASE_SPEED = 200
 export const PIPE_STARTING_OFFSET = 900
@@ -20,3 +22,4 @@ export enum TriggerState {
     OUT = 'OUT',
 }
 export const FADE_OUT_TIME = 1000
+export const ROTATION_ACCERATION = -1

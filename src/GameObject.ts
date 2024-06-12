@@ -1,14 +1,16 @@
 import { BoxCollider, Collider } from './Collider'
 import Transform from './Transform'
 import Vector2 from './Vector2'
-import { BodyType, GRAVITAIONAL_ACCELERATION } from './constants'
+import { BodyType, GRAVITAIONAL_ACCELERATION, ROTATION_ACCERATION } from './constants'
 import UpdateInput from './types/update'
 
 export class GameObject {
     protected transform: Transform
     protected velocity: Velocity
+    protected rotationSpeed: number
     public collider: Collider
     public bodyType: BodyType
+    public rotationAcceleration: number
     constructor(width: number, height: number, bodyType: BodyType) {
         this.transform = new Transform(0, 0, 0, 1)
         this.velocity = new Velocity()
@@ -19,6 +21,8 @@ export class GameObject {
             this.transform.getPosition().y
         )
         this.bodyType = bodyType
+        this.rotationSpeed = 0
+        this.rotationAcceleration = 0
     }
 
     public update(updateInput: UpdateInput): void {
@@ -30,6 +34,16 @@ export class GameObject {
         position.y += (direction.y * speed * updateInput.delta) / 1000
         colliderPosition.x = position.x
         colliderPosition.y = position.y
+        let rotation = this.transform.getRotation() + this.rotationSpeed * updateInput.delta
+        console.log('Rotation:', this.transform.getRotation())
+        if (rotation < -90) {
+            rotation = -90
+        } else if (rotation > 90) {
+            rotation = 90
+        } else {
+            this.rotationSpeed += this.rotationAcceleration * updateInput.delta
+        }
+        this.transform.setRotation(rotation)
     }
 
     public updateGravity(updateInput: UpdateInput): void {
