@@ -13,19 +13,23 @@ import {
     PIPE_FLIP_SOURCE,
     PIPE_GAP,
     PIPE_SOURCE,
+    PIPE_STARTING_OFFSET,
 } from './constants'
 import { GameState } from './types/state'
 import { GameStartState } from './State'
+import TextElement from './TextElement'
 
 export class Game {
     public player: Player
     public obstacles: Obstacle[][]
     public bases: Base[]
     private lastTime: number
-    private canvas: Canvas
+    public canvas: Canvas
     public inputHandler: InputHandler
     public state: GameState
     public hitAudio: HTMLAudioElement
+    public gameTitle: TextElement
+    public gameOverTitle: TextElement
     constructor() {
         console.log('Game created')
         this.player = new Player()
@@ -33,6 +37,8 @@ export class Game {
         this.player.setDirection(new Vector2(0, 1))
         this.player.setPosition(75, 300)
         this.canvas = new Canvas(450, 800)
+        this.gameTitle = new TextElement(this.canvas.canvas.width / 2, 200, 'Flappy Bird', 'Arial', 50, 'bold', true)
+        this.gameOverTitle = new TextElement(this.canvas.canvas.width / 2, 200, 'Game Over', 'Arial', 50, 'bold', true)
         this.obstacleInit()
         this.bases = []
         this.state = new GameStartState()
@@ -62,21 +68,7 @@ export class Game {
     }
 
     render(): void {
-        const canvas = this.canvas.canvas
-        const ctx = canvas.getContext('2d')
-        if (ctx === null) {
-            return
-        }
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        this.canvas.renderBackground()
-        this.player.render(ctx)
-        this.obstacles.forEach((obstacle) => {
-            obstacle[0].render(ctx)
-            obstacle[1].render(ctx)
-        })
-        this.bases.forEach((base) => {
-            base.render(ctx)
-        })
+        this.state.render(this)
     }
 
     loop(): void {
@@ -94,10 +86,10 @@ export class Game {
         for (let i = 0; i < 3; i++) {
             const obstacle = new Obstacle(104, 640, PIPE_SOURCE, BodyType.STATIC_BODY)
             const randomY = Math.floor(Math.random() * 300) + 200
-            obstacle.setPosition(450 + PIPE_DISTANCE * i, randomY)
+            obstacle.setPosition(PIPE_STARTING_OFFSET + PIPE_DISTANCE * i, randomY)
             const invertedObstacle = new Obstacle(104, 640, PIPE_FLIP_SOURCE, BodyType.STATIC_BODY)
             invertedObstacle.setPosition(
-                450 + PIPE_DISTANCE * i,
+                PIPE_STARTING_OFFSET + PIPE_DISTANCE * i,
                 randomY - invertedObstacle.getHeight() - PIPE_GAP
             )
             this.obstacles.push([obstacle, invertedObstacle])
@@ -109,7 +101,6 @@ export class Game {
     }
 
     obstacleSpawner(): void {
-        console.log(this.obstacles)
         if (this.obstacles[0][0].getPosition().x + this.obstacles[0][0].getWidth() < 0) {
             this.obstacles.shift()
             const obstacle = new Obstacle(104, 640, PIPE_SOURCE, BodyType.STATIC_BODY)

@@ -16,6 +16,21 @@ export class GameStartState implements GameState {
         })
         game.baseSpawner()
     }
+
+    render(game: Game): void {
+        const canvas = game.canvas.canvas
+        const ctx = canvas.getContext('2d')
+        if (ctx === null) {
+            return
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        game.canvas.renderBackground()
+        game.player.render(ctx)
+        game.bases.forEach((base) => {
+            base.render(ctx)
+        })
+        game.gameTitle.render(ctx)
+    }
 }
 
 export class GamePlayState implements GameState {
@@ -40,7 +55,10 @@ export class GamePlayState implements GameState {
         game.obstacleSpawner()
         let collision = false
         for (const obstacle of game.obstacles) {
-            if (game.player.collider.checkCollision(obstacle[0].collider) || game.player.collider.checkCollision(obstacle[1].collider)) {
+            if (
+                game.player.collider.checkCollision(obstacle[0].collider) ||
+                game.player.collider.checkCollision(obstacle[1].collider)
+            ) {
                 console.log('Collision detected')
                 // game.player.handleCollision(updateInput, obstacle[0].collider)
                 collision = true
@@ -59,17 +77,36 @@ export class GamePlayState implements GameState {
         }
 
         if (collision) {
+            game.hitAudio.currentTime = 0.06
             game.hitAudio.play()
             game.state = new GameOverState()
         }
 
         game.player.updateGravity(updateInput)
     }
+
+    render(game: Game): void {
+        const canvas = game.canvas.canvas
+        const ctx = canvas.getContext('2d')
+        if (ctx === null) {
+            return
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        game.canvas.renderBackground()
+        game.player.render(ctx)
+        game.obstacles.forEach((obstacle) => {
+            obstacle[0].render(ctx)
+            obstacle[1].render(ctx)
+        })
+        game.bases.forEach((base) => {
+            base.render(ctx)
+        })
+    }
 }
 
 export class GameOverState {
     handleInput(game: Game): GameState | null {
-        if (game.inputHandler.isKeyDown('Space')) {
+        if (game.inputHandler.isKeyDown('r')) {
             game.player.setPosition(75, 300)
             game.obstacleInit()
             return new GameStartState()
@@ -79,5 +116,24 @@ export class GameOverState {
 
     update(game: Game, updateInput: UpdateInput): void {
         console.log('Game over')
+    }
+
+    render(game: Game): void {
+        const canvas = game.canvas.canvas
+        const ctx = canvas.getContext('2d')
+        if (ctx === null) {
+            return
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        game.canvas.renderBackground()
+        game.player.render(ctx)
+        game.obstacles.forEach((obstacle) => {
+            obstacle[0].render(ctx)
+            obstacle[1].render(ctx)
+        })
+        game.bases.forEach((base) => {
+            base.render(ctx)
+        })
+        game.gameOverTitle.render(ctx)
     }
 }
