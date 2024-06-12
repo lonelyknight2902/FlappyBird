@@ -23,6 +23,10 @@ class TextElement extends UIElement {
         this._isCentered = isCentered
     }
 
+    public setText(text: string): void {
+        this._text = text
+    }
+
     public render(ctx: CanvasRenderingContext2D): void {
         ctx.font = `${this._weight} ${this._size}px ${this._family}`
         ctx.fillStyle = 'white'
