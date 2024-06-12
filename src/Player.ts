@@ -1,5 +1,5 @@
 import { GameObject } from './GameObject'
-import { BodyType, FLAP_FORCE } from './constants'
+import { BodyType, FLAP_AUDIO, FLAP_FORCE } from './constants'
 
 class Player extends GameObject {
     private _sprite: HTMLImageElement
@@ -7,6 +7,7 @@ class Player extends GameObject {
     private _spriteCycle: number[]
     private _frameCount: number
     private _currentFrame: number
+    private _flapAudio: HTMLAudioElement
     constructor() {
         super(68, 48, BodyType.RIGID_BODY)
         console.log('Player created')
@@ -20,6 +21,8 @@ class Player extends GameObject {
         this._frameCount = 0
         this._currentFrame = 0
         this._sprite.src = this._spriteSource[this._spriteCycle[this._currentFrame]]
+        this._flapAudio = document.createElement('audio')
+        this._flapAudio.src = FLAP_AUDIO
     }
 
     set spriteSource(value: string) {
@@ -41,6 +44,7 @@ class Player extends GameObject {
     flap(): void {
         console.log('Flap')
         this.setSpeed(-FLAP_FORCE)
+        this._flapAudio.play()
     }
 }
 

@@ -25,6 +25,7 @@ export class Game {
     private canvas: Canvas
     public inputHandler: InputHandler
     public state: GameState
+    public hitAudio: HTMLAudioElement
     constructor() {
         console.log('Game created')
         this.player = new Player()
@@ -43,6 +44,8 @@ export class Game {
             base.setDirection(new Vector2(-1, 0))
         }
         this.inputHandler = new InputHandler()
+        this.hitAudio = document.createElement('audio')
+        this.hitAudio.src = 'assets/audio/hit.wav'
         this.lastTime = window.performance.now()
         requestAnimationFrame(() => this.loop())
     }

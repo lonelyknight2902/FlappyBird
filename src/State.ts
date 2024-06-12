@@ -38,15 +38,13 @@ export class GamePlayState implements GameState {
         })
         game.baseSpawner()
         game.obstacleSpawner()
+        let collision = false
         for (const obstacle of game.obstacles) {
-            if (game.player.collider.checkCollision(obstacle[0].collider)) {
+            if (game.player.collider.checkCollision(obstacle[0].collider) || game.player.collider.checkCollision(obstacle[1].collider)) {
                 console.log('Collision detected')
-                game.player.handleCollision(updateInput, obstacle[0].collider)
-                game.state = new GameOverState()
-            } else if (game.player.collider.checkCollision(obstacle[1].collider)) {
-                console.log('Collision detected')
-                // game.player.handleCollision(updateInput, obstacle[1].collider)
-                game.state = new GameOverState()
+                // game.player.handleCollision(updateInput, obstacle[0].collider)
+                collision = true
+                break
             }
         }
 
@@ -54,9 +52,15 @@ export class GamePlayState implements GameState {
             if (game.player.collider.checkCollision(base.collider)) {
                 console.log('Collision detected')
                 // game.player.handleCollision(updateInput, base.collider)
+                collision = true
                 game.player.setSpeed(0)
                 game.state = new GameOverState()
             }
+        }
+
+        if (collision) {
+            game.hitAudio.play()
+            game.state = new GameOverState()
         }
 
         game.player.updateGravity(updateInput)
