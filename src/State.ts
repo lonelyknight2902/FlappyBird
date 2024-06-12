@@ -1,10 +1,14 @@
+import { FADE_OUT_TIME, TriggerState } from './constants'
 import { Game } from './game'
 import { GameState } from './types/state'
 import UpdateInput from './types/update'
 
 export class GameStartState implements GameState {
+    private _start: number
+    private _end: number
+    private _overlayAlpha: number
     handleInput(game: Game): GameState | null {
-        if (game.inputHandler.isKeyDown('Space')) {
+        if (game.inputHandler.isKeyDown('Space') && Date.now() > this._end) {
             return new GamePlayState()
         }
         return null
@@ -30,7 +34,17 @@ export class GameStartState implements GameState {
             base.render(ctx)
         })
         game.gameTitle.render(ctx)
+        const alpha = Math.max(0, this._overlayAlpha - (Date.now() - this._start) / FADE_OUT_TIME)
+        ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
+
+    enter(game: Game): void {
+        this._start = Date.now()
+        this._end = this._start + FADE_OUT_TIME
+        this._overlayAlpha = 1
+    }
+    exit(game: Game): void {}
 }
 
 export class GamePlayState implements GameState {
@@ -50,6 +64,9 @@ export class GamePlayState implements GameState {
         game.obstacles.forEach((obstacle) => {
             obstacle[0].update(updateInput)
             obstacle[1].update(updateInput)
+        })
+        game.triggerAreas.forEach((trigger) => {
+            trigger.update(updateInput)
         })
         game.baseSpawner()
         game.obstacleSpawner()
@@ -73,6 +90,14 @@ export class GamePlayState implements GameState {
                 collision = true
                 game.player.setSpeed(0)
                 game.state = new GameOverState()
+            }
+        }
+        for (const trigger of game.triggerAreas) {
+            // trigger.update(updateInput)
+            if (trigger.triggerUpdate([game.player]) === TriggerState.EXIT) {
+                game.scoreManager.increaseScore()
+                game.scoreManager.update()
+                game.scoreText.setText(game.scoreManager.score.toString())
             }
         }
 
@@ -101,7 +126,14 @@ export class GamePlayState implements GameState {
         game.bases.forEach((base) => {
             base.render(ctx)
         })
+        game.triggerAreas.forEach((trigger) => {
+            trigger.render(ctx)
+        })
+        game.scoreText.render(ctx)
     }
+
+    enter(game: Game): void {}
+    exit(game: Game): void {}
 }
 
 export class GameOverState {
@@ -109,6 +141,8 @@ export class GameOverState {
         if (game.inputHandler.isKeyDown('r')) {
             game.player.setPosition(75, 300)
             game.obstacleInit()
+            game.scoreManager.resetScore()
+            game.scoreText.setText('0')
             return new GameStartState()
         }
         return null
@@ -135,5 +169,12 @@ export class GameOverState {
             base.render(ctx)
         })
         game.gameOverTitle.render(ctx)
+        game.finalScoreText.setText('Score: ' + game.scoreManager.score.toString())
+        game.highScoreText.setText('High score: ' + game.scoreManager.highScore.toString())
+        game.finalScoreText.render(ctx)
+        game.highScoreText.render(ctx)
     }
+
+    enter(game: Game): void {}
+    exit(game: Game): void {}
 }
