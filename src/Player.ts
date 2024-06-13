@@ -3,7 +3,7 @@ import { BodyType, FLAP_AUDIO, FLAP_FORCE, FLAP_RATE, ROTATION_ACCERATION } from
 import UpdateInput from './types/update'
 
 class Player extends GameObject {
-    private _sprite: HTMLImageElement
+    private _sprite: HTMLImageElement[]
     private _spriteSource: string[]
     private _spriteCycle: number[]
     private _frameCount: number
@@ -17,16 +17,20 @@ class Player extends GameObject {
     constructor() {
         super(68, 48, BodyType.RIGID_BODY)
         console.log('Player created')
-        this._sprite = document.createElement('img')
+        this._sprite = []
         this._spriteSource = [
             'assets/images/yellowbird-midflap.png',
             'assets/images/yellowbird-upflap.png',
             'assets/images/yellowbird-downflap.png',
         ]
+        this._spriteSource.forEach((source) => {
+            const sprite = document.createElement('img')
+            sprite.src = source
+            this._sprite.push(sprite)
+        })
         this._spriteCycle = [0, 1, 0, 2]
         this._frameCount = 0
         this._currentFrame = 0
-        this._sprite.src = this._spriteSource[this._spriteCycle[this._currentFrame]]
         this._flapAudio = document.createElement('audio')
         this._flapAudio.src = FLAP_AUDIO
         this._rotationSpeed = 0
@@ -37,15 +41,17 @@ class Player extends GameObject {
 
     update(updateInput: UpdateInput): void {
         super.update(updateInput)
-        let rotation = this.transform.getRotation() + this._rotationSpeed * updateInput.delta / 1000
+        let rotation =
+            this.transform.getRotation() + (this._rotationSpeed * updateInput.delta) / 1000
         if (rotation < -30) {
             rotation = -30
             this._rotationSpeed = 0
         } else if (rotation > 90) {
             rotation = 90
         } else {
-            rotation = this.transform.getRotation() + this._rotationSpeed * updateInput.delta / 1000
-            this._rotationSpeed += this._rotationAcceleration * updateInput.delta / 1000
+            rotation =
+                this.transform.getRotation() + (this._rotationSpeed * updateInput.delta) / 1000
+            this._rotationSpeed += (this._rotationAcceleration * updateInput.delta) / 1000
         }
         this.transform.setRotation(rotation)
     }
@@ -59,16 +65,16 @@ class Player extends GameObject {
         if (this._frameCount > FLAP_RATE) {
             this._frameCount = 0
             this._currentFrame++
-            if (this._currentFrame > 3) this._currentFrame = 0
+            if (this._currentFrame > this._spriteCycle.length - 1) this._currentFrame = 0
         }
-        this._sprite.src = this._spriteSource[this._spriteCycle[this._currentFrame]]
+        const currentSprite = this._sprite[this._spriteCycle[this._currentFrame]]
         const position = this.transform.getPosition()
         ctx.save()
         ctx.translate(position.x + this._width / 2, position.y + this._height / 2)
         const rotation = this.transform.getRotation() * (Math.PI / 180)
         ctx.rotate(rotation)
         ctx.translate(-position.x - this._width / 2, -position.y - this._height / 2)
-        ctx.drawImage(this._sprite, position.x, position.y, 68, 48)
+        ctx.drawImage(currentSprite, position.x, position.y, 68, 48)
         ctx.restore()
     }
 
@@ -76,9 +82,10 @@ class Player extends GameObject {
         this.setSpeed(-FLAP_FORCE)
         this.setRotation(-30)
         this.setRotationSpeed(0)
-        console.log('Rotation Speed:', this._rotationSpeed)
-        this._flapAudio.currentTime = 0
-        this._flapAudio.play()
+        this._flapAudio.currentTime = 0.03
+        this._flapAudio.play().catch(function (error) {
+            console.log('Audio play was prevented:', error)
+        })
     }
 
     public setRotationSpeed(value: number): void {
