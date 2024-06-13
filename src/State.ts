@@ -1,4 +1,4 @@
-import { FADE_OUT_TIME, TriggerState } from './constants'
+import { FADE_OUT_TIME, FLASH_IN_OUT_TIME, TriggerState } from './constants'
 import { Game } from './game'
 import { GameState } from './types/state'
 import UpdateInput from './types/update'
@@ -94,6 +94,7 @@ export class GamePlayState implements GameState {
                 collision = true
                 game.player.setSpeed(0)
                 game.state = new GameOverState()
+                game.state.enter(game)
             }
         }
         for (const trigger of game.triggerAreas) {
@@ -109,6 +110,7 @@ export class GamePlayState implements GameState {
             game.hitAudio.currentTime = 0.06
             game.hitAudio.play()
             game.state = new GameOverState()
+            game.state.enter(game)
         }
 
         game.player.updateGravity(updateInput)
@@ -145,6 +147,9 @@ export class GamePlayState implements GameState {
 }
 
 export class GameOverState {
+    private _start: number
+    private _end: number
+    private _overlayAlpha: number
     handleInput(game: Game): GameState | null {
         if (game.inputHandler.isKeyDown('r')) {
             game.player.setPosition(75, 300)
@@ -181,10 +186,20 @@ export class GameOverState {
         game.highScoreText.setText('High score: ' + game.scoreManager.highScore.toString())
         game.finalScoreText.render(ctx)
         game.highScoreText.render(ctx)
+        let alpha: number
+        if (Date.now() - this._start <= FLASH_IN_OUT_TIME / 2) {
+            alpha = Math.min(1, (Date.now() - this._start) / FLASH_IN_OUT_TIME / 2)
+        } else {
+            alpha = Math.max(0, 1 - (Date.now() - this._start) / FLASH_IN_OUT_TIME / 2)
+        }
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
     enter(game: Game): void {
-        return
+        this._start = Date.now()
+        this._end = this._start + FLASH_IN_OUT_TIME
+        this._overlayAlpha = 0
     }
     exit(game: Game): void {
         return
