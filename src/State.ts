@@ -43,8 +43,12 @@ export class GameStartState implements GameState {
         this._start = Date.now()
         this._end = this._start + FADE_OUT_TIME
         this._overlayAlpha = 1
+        game.player.setRotation(0)
+        game.player.setRotationSpeed(0)
     }
-    exit(game: Game): void {}
+    exit(game: Game): void {
+        return
+    }
 }
 
 export class GamePlayState implements GameState {
@@ -132,8 +136,12 @@ export class GamePlayState implements GameState {
         game.scoreText.render(ctx)
     }
 
-    enter(game: Game): void {}
-    exit(game: Game): void {}
+    enter(game: Game): void {
+        return
+    }
+    exit(game: Game): void {
+        return
+    }
 }
 
 export class GameOverState {
@@ -175,6 +183,10 @@ export class GameOverState {
         game.highScoreText.render(ctx)
     }
 
-    enter(game: Game): void {}
-    exit(game: Game): void {}
+    enter(game: Game): void {
+        return
+    }
+    exit(game: Game): void {
+        return
+    }
 }

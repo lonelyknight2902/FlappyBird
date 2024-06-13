@@ -1,16 +1,14 @@
 import { BoxCollider, Collider } from './Collider'
 import Transform from './Transform'
 import Vector2 from './Vector2'
-import { BodyType, GRAVITAIONAL_ACCELERATION, ROTATION_ACCERATION } from './constants'
+import { BodyType, GRAVITAIONAL_ACCELERATION } from './constants'
 import UpdateInput from './types/update'
 
 export class GameObject {
     protected transform: Transform
     protected velocity: Velocity
-    protected rotationSpeed: number
     public collider: Collider
     public bodyType: BodyType
-    public rotationAcceleration: number
     constructor(width: number, height: number, bodyType: BodyType) {
         this.transform = new Transform(0, 0, 0, 1)
         this.velocity = new Velocity()
@@ -21,8 +19,6 @@ export class GameObject {
             this.transform.getPosition().y
         )
         this.bodyType = bodyType
-        this.rotationSpeed = 0
-        this.rotationAcceleration = 0
     }
 
     public update(updateInput: UpdateInput): void {
@@ -34,16 +30,6 @@ export class GameObject {
         position.y += (direction.y * speed * updateInput.delta) / 1000
         colliderPosition.x = position.x
         colliderPosition.y = position.y
-        let rotation = this.transform.getRotation() + this.rotationSpeed * updateInput.delta
-        console.log('Rotation:', this.transform.getRotation())
-        if (rotation < -90) {
-            rotation = -90
-        } else if (rotation > 90) {
-            rotation = 90
-        } else {
-            this.rotationSpeed += this.rotationAcceleration * updateInput.delta
-        }
-        this.transform.setRotation(rotation)
     }
 
     public updateGravity(updateInput: UpdateInput): void {
@@ -66,13 +52,13 @@ export class GameObject {
             colliderPosition.x >= otherPosition.x ||
             colliderPosition.x <= otherPosition.x + other.width
         ) {
-            position.x -= (speed * direction.x * updateInput.delta) / 1000
+            position.x = otherPosition.x - 1
         }
         if (
             colliderPosition.y >= otherPosition.y ||
             colliderPosition.y <= otherPosition.y + other.height
         ) {
-            position.y -= (speed * direction.y * updateInput.delta) / 1000
+            position.y = otherPosition.y - 1
         }
     }
 
@@ -106,6 +92,10 @@ export class GameObject {
 
     public setCollider(width: number, height: number, x: number, y: number): void {
         this.collider = new BoxCollider(width, height, x, y)
+    }
+
+    public setRotation(rotation: number): void {
+        this.transform.setRotation(rotation)
     }
 }
 

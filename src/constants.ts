@@ -1,4 +1,4 @@
-export const GRAVITAIONAL_ACCELERATION = 900
+export const GRAVITAIONAL_ACCELERATION = 1200
 export const FLAP_FORCE = 200
 export enum BodyType {
     RIGID_BODY = 'RIGID_BODY',
@@ -22,4 +22,5 @@ export enum TriggerState {
     OUT = 'OUT',
 }
 export const FADE_OUT_TIME = 1000
-export const ROTATION_ACCERATION = -1
+export const ROTATION_ACCERATION = 200
+export const FLAP_ROTATION_TIME = 100
