@@ -13,7 +13,7 @@ class InputHandler {
 
         window.addEventListener('touchstart', (e) => {
             e.preventDefault()
-            this._keys['Space'] = true
+            this._keys['Space'] = !this._keys['Space']
         })
 
         window.addEventListener('touchend', (e) => {

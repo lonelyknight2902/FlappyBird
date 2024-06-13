@@ -62,6 +62,7 @@ export class GamePlayState implements GameState {
             game.player.flap()
             return null
         }
+        game.player.unflap()
         return null
     }
 
