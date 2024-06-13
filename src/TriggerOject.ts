@@ -29,7 +29,6 @@ class TriggerObject extends GameObject {
         //     console.log('TriggerObject objectsInArea:', this._objectsInArea)
         // }
         for (let i = 0; i < objects.length; i++) {
-            console.log(this.collider.checkCollision(objects[i].collider))
             if (
                 this.collider.checkCollision(objects[i].collider) &&
                 !this._objectsInArea.includes(objects[i])
