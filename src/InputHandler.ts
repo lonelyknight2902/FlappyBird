@@ -11,6 +11,16 @@ class InputHandler {
             }
         })
 
+        window.addEventListener('touchstart', (e) => {
+            e.preventDefault()
+            this._keys['Space'] = true
+        })
+
+        window.addEventListener('touchend', (e) => {
+            e.preventDefault()
+            this._keys['Space'] = false
+        })
+
         window.addEventListener('keyup', (e) => {
             e.preventDefault()
             if (e.key === ' ') {
