@@ -1,4 +1,10 @@
-import { FADE_OUT_TIME, FLASH_IN_OUT_TIME, TriggerState } from './constants'
+import {
+    BACKGROUND_DAY,
+    BACKGROUND_NIGHT,
+    FADE_OUT_TIME,
+    FLASH_IN_OUT_TIME,
+    TriggerState,
+} from './constants'
 import { Game } from './game'
 import { GameState } from './types/state'
 import UpdateInput from './types/update'
@@ -13,7 +19,6 @@ export class GameStartState implements GameState {
         }
         return null
     }
-
     update(game: Game, updateInput: UpdateInput): void {
         game.bases.forEach((base) => {
             base.update(updateInput)
@@ -23,11 +28,11 @@ export class GameStartState implements GameState {
 
     render(game: Game): void {
         const canvas = game.canvas.canvas
-        const ctx = canvas.getContext('2d')
+        const ctx = game.canvas.getContext()
         if (ctx === null) {
             return
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        game.canvas.clear()
         game.canvas.renderBackground()
         game.player.render(ctx)
         game.bases.forEach((base) => {
@@ -102,6 +107,13 @@ export class GamePlayState implements GameState {
             if (trigger.triggerUpdate([game.player]) === TriggerState.EXIT) {
                 game.scoreManager.increaseScore()
                 game.scoreManager.update()
+                if (game.scoreManager.score % 10 === 0 && game.scoreManager.score !== 0) {
+                    if (game.canvas.backgroundSource === BACKGROUND_DAY) {
+                        game.canvas.backgroundSource = BACKGROUND_NIGHT
+                    } else {
+                        game.canvas.backgroundSource = BACKGROUND_DAY
+                    }
+                }
                 game.scoreText.setText(game.scoreManager.score.toString())
             }
         }
@@ -122,7 +134,7 @@ export class GamePlayState implements GameState {
         if (ctx === null) {
             return
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        game.canvas.clear()
         game.canvas.renderBackground()
         game.player.render(ctx)
         game.obstacles.forEach((obstacle) => {
@@ -149,9 +161,8 @@ export class GamePlayState implements GameState {
 export class GameOverState {
     private _start: number
     private _end: number
-    private _overlayAlpha: number
     handleInput(game: Game): GameState | null {
-        if (game.inputHandler.isKeyDown('r')) {
+        if (game.inputHandler.isKeyDown('Space') && Date.now() - this._start > 1000) {
             game.player.setPosition(75, 300)
             game.obstacleInit()
             game.scoreManager.resetScore()
@@ -171,7 +182,7 @@ export class GameOverState {
         if (ctx === null) {
             return
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        game.canvas.clear()
         game.canvas.renderBackground()
         game.player.render(ctx)
         game.obstacles.forEach((obstacle) => {
@@ -199,7 +210,6 @@ export class GameOverState {
     enter(game: Game): void {
         this._start = Date.now()
         this._end = this._start + FLASH_IN_OUT_TIME
-        this._overlayAlpha = 0
     }
     exit(game: Game): void {
         return
