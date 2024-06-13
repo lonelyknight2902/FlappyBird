@@ -26,4 +26,4 @@ export enum TriggerState {
 export const FADE_OUT_TIME = 1000
 export const ROTATION_ACCERATION = 500
 export const FLAP_ROTATION_TIME = 100
-export const FLASH_IN_OUT_TIME = 100
+export const FLASH_IN_OUT_TIME = 200

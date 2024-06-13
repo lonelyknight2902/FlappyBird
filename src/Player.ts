@@ -13,6 +13,8 @@ class Player extends GameObject {
     private _height: number
     private _rotationSpeed: number
     private _rotationAcceleration: number
+    private _flapped = false
+    private _start: number
 
     constructor() {
         super(68, 48, BodyType.RIGID_BODY)
@@ -37,6 +39,7 @@ class Player extends GameObject {
         this._rotationAcceleration = ROTATION_ACCERATION
         this._width = 68
         this._height = 48
+        this._start = Date.now()
     }
 
     update(updateInput: UpdateInput): void {
@@ -61,9 +64,9 @@ class Player extends GameObject {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        this._frameCount++
-        if (this._frameCount > FLAP_RATE) {
-            this._frameCount = 0
+        const current = Date.now()
+        if (current - this._start > FLAP_RATE) {
+            this._start = current
             this._currentFrame++
             if (this._currentFrame > this._spriteCycle.length - 1) this._currentFrame = 0
         }
@@ -79,6 +82,8 @@ class Player extends GameObject {
     }
 
     flap(): void {
+        if (this._flapped) return
+        this._flapped = true
         this.setSpeed(-FLAP_FORCE)
         this.setRotation(-30)
         this.setRotationSpeed(0)
@@ -86,6 +91,10 @@ class Player extends GameObject {
         this._flapAudio.play().catch(function (error) {
             console.log('Audio play was prevented:', error)
         })
+    }
+
+    unflap(): void {
+        this._flapped = false
     }
 
     public setRotationSpeed(value: number): void {
