@@ -1,5 +1,5 @@
-export const GRAVITAIONAL_ACCELERATION = 1500
-export const FLAP_FORCE = 200
+export const GRAVITAIONAL_ACCELERATION = 2000
+export const FLAP_FORCE = 500
 export enum BodyType {
     RIGID_BODY = 'RIGID_BODY',
     STATIC_BODY = 'STATIC_BODY',
@@ -15,6 +15,8 @@ export const PIPE_SOURCE = 'assets/images/pipe-green.png'
 export const PIPE_FLIP_SOURCE = 'assets/images/pipe-green-flip.png'
 export const FLAP_AUDIO = 'assets/audio/wing.wav'
 export const POINT_AUDIO = 'assets/audio/point.wav'
+export const BACKGROUND_DAY = 'assets/images/background-day.png'
+export const BACKGROUND_NIGHT = 'assets/images/background-night.png'
 export enum TriggerState {
     ENTER = 'ENTER',
     EXIT = 'EXIT',
