@@ -1,5 +1,7 @@
 import { GameObject } from './GameObject'
-import { BodyType, FLAP_AUDIO, FLAP_FORCE, FLAP_RATE, ROTATION_ACCERATION } from './constants'
+import { PlayerAliveState } from './State'
+import { BodyType, FLAP_AUDIO, FLAP_FORCE, ROTATION_ACCERATION } from './constants'
+import { PlayerState } from './types/state'
 import UpdateInput from './types/update'
 
 class Player extends GameObject {
@@ -15,6 +17,7 @@ class Player extends GameObject {
     private _rotationAcceleration: number
     private _flapped = false
     private _start: number
+    private _state: PlayerState
 
     constructor() {
         super(68, 48, BodyType.RIGID_BODY)
@@ -40,6 +43,7 @@ class Player extends GameObject {
         this._width = 68
         this._height = 48
         this._start = Date.now()
+        this._state = new PlayerAliveState()
     }
 
     update(updateInput: UpdateInput): void {
@@ -57,6 +61,7 @@ class Player extends GameObject {
             this._rotationSpeed += (this._rotationAcceleration * updateInput.delta) / 1000
         }
         this.transform.setRotation(rotation)
+        this.updateGravity(updateInput)
     }
 
     set spriteSource(value: string) {
@@ -64,21 +69,7 @@ class Player extends GameObject {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        const current = Date.now()
-        if (current - this._start > FLAP_RATE) {
-            this._start = current
-            this._currentFrame++
-            if (this._currentFrame > this._spriteCycle.length - 1) this._currentFrame = 0
-        }
-        const currentSprite = this._sprite[this._spriteCycle[this._currentFrame]]
-        const position = this.transform.getPosition()
-        ctx.save()
-        ctx.translate(position.x + this._width / 2, position.y + this._height / 2)
-        const rotation = this.transform.getRotation() * (Math.PI / 180)
-        ctx.rotate(rotation)
-        ctx.translate(-position.x - this._width / 2, -position.y - this._height / 2)
-        ctx.drawImage(currentSprite, position.x, position.y, 68, 48)
-        ctx.restore()
+        this._state.render(this, ctx)
     }
 
     flap(): void {
@@ -87,7 +78,7 @@ class Player extends GameObject {
         this.setSpeed(-FLAP_FORCE)
         this.setRotation(-30)
         this.setRotationSpeed(0)
-        this._flapAudio.currentTime = 0.03
+        this._flapAudio.currentTime = 0
         this._flapAudio.play().catch(function (error) {
             console.log('Audio play was prevented:', error)
         })
@@ -99,6 +90,42 @@ class Player extends GameObject {
 
     public setRotationSpeed(value: number): void {
         this._rotationSpeed = value
+    }
+
+    public get start(): number {
+        return this._start
+    }
+
+    public set start(value: number) {
+        this._start = value
+    }
+
+    public get currentFrame(): number {
+        return this._currentFrame
+    }
+
+    public set currentFrame(value: number) {
+        this._currentFrame = value
+    }
+
+    public get spriteCycle(): number[] {
+        return this._spriteCycle
+    }
+
+    public get sprite(): HTMLImageElement[] {
+        return this._sprite
+    }
+
+    public get width(): number {
+        return this._width
+    }
+
+    public get height(): number {
+        return this._height
+    }
+
+    public set state(value: PlayerState) {
+        this._state = value
     }
 }
 

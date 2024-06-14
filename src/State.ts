@@ -1,12 +1,12 @@
+import Player from './Player'
 import {
-    BACKGROUND_DAY,
-    BACKGROUND_NIGHT,
     FADE_OUT_TIME,
+    FLAP_RATE,
     FLASH_IN_OUT_TIME,
     TriggerState,
 } from './constants'
 import { Game } from './game'
-import { GameState } from './types/state'
+import { GameState, PlayerState } from './types/state'
 import UpdateInput from './types/update'
 
 export class GameStartState implements GameState {
@@ -50,6 +50,8 @@ export class GameStartState implements GameState {
         this._overlayAlpha = 1
         game.player.setRotation(0)
         game.player.setRotationSpeed(0)
+        game.canvas.reset()
+        game.player.state = new PlayerAliveState()
     }
     exit(game: Game): void {
         return
@@ -67,6 +69,7 @@ export class GamePlayState implements GameState {
     }
 
     update(game: Game, updateInput: UpdateInput): void {
+        game.canvas.update(updateInput)
         game.player.update(updateInput)
         game.bases.forEach((base) => {
             base.update(updateInput)
@@ -108,15 +111,15 @@ export class GamePlayState implements GameState {
             if (trigger.triggerUpdate([game.player]) === TriggerState.EXIT) {
                 game.scoreManager.increaseScore()
                 game.scoreManager.update()
-                if (game.scoreManager.score % 10 === 0 && game.scoreManager.score !== 0) {
-                    if (game.canvas.backgroundSource === BACKGROUND_DAY) {
-                        game.canvas.backgroundSource = BACKGROUND_NIGHT
-                    } else {
-                        game.canvas.backgroundSource = BACKGROUND_DAY
-                    }
-                }
                 game.scoreText.setText(game.scoreManager.score.toString())
             }
+        }
+
+        if (
+            game.player.getPosition().y <= 0 ||
+            game.player.getPosition().y >= game.canvas.canvas.height
+        ) {
+            collision = true
         }
 
         if (collision) {
@@ -126,7 +129,6 @@ export class GamePlayState implements GameState {
             game.state.enter(game)
         }
 
-        game.player.updateGravity(updateInput)
     }
 
     render(game: Game): void {
@@ -137,11 +139,11 @@ export class GamePlayState implements GameState {
         }
         game.canvas.clear()
         game.canvas.renderBackground()
-        game.player.render(ctx)
         game.obstacles.forEach((obstacle) => {
             obstacle[0].render(ctx)
             obstacle[1].render(ctx)
         })
+        game.player.render(ctx)
         game.bases.forEach((base) => {
             base.render(ctx)
         })
@@ -152,7 +154,7 @@ export class GamePlayState implements GameState {
     }
 
     enter(game: Game): void {
-        return
+        game.player.flap()
     }
     exit(game: Game): void {
         return
@@ -174,7 +176,13 @@ export class GameOverState {
     }
 
     update(game: Game, updateInput: UpdateInput): void {
-        console.log('Game over')
+        game.player.update(updateInput)
+        for (const base of game.bases) {
+            if (game.player.collider.checkCollision(base.collider)) {
+                // game.player.handleCollision(updateInput, base.collider)
+                game.player.setSpeed(0)
+            }
+        }
     }
 
     render(game: Game): void {
@@ -185,11 +193,11 @@ export class GameOverState {
         }
         game.canvas.clear()
         game.canvas.renderBackground()
-        game.player.render(ctx)
         game.obstacles.forEach((obstacle) => {
             obstacle[0].render(ctx)
             obstacle[1].render(ctx)
         })
+        game.player.render(ctx)
         game.bases.forEach((base) => {
             base.render(ctx)
         })
@@ -209,10 +217,46 @@ export class GameOverState {
     }
 
     enter(game: Game): void {
+        console.log('Game over')
         this._start = Date.now()
         this._end = this._start + FLASH_IN_OUT_TIME
+        game.player.state = new PlayerDieState()
     }
     exit(game: Game): void {
         return
+    }
+}
+
+export class PlayerAliveState implements PlayerState {
+    render(player: Player, ctx: CanvasRenderingContext2D): void {
+        const current = Date.now()
+        if (current - player.start > FLAP_RATE) {
+            player.start = current
+            player.currentFrame++
+            if (player.currentFrame > player.spriteCycle.length - 1) player.currentFrame = 0
+        }
+        const currentSprite = player.sprite[player.spriteCycle[player.currentFrame]]
+        const position = player.getPosition()
+        ctx.save()
+        ctx.translate(position.x + player.width / 2, position.y + player.height / 2)
+        const rotation = player.getTransform().getRotation() * (Math.PI / 180)
+        ctx.rotate(rotation)
+        ctx.translate(-position.x - player.width / 2, -position.y - player.height / 2)
+        ctx.drawImage(currentSprite, position.x, position.y, 68, 48)
+        ctx.restore()
+    }
+}
+
+export class PlayerDieState implements PlayerState {
+    render(player: Player, ctx: CanvasRenderingContext2D): void {
+        const currentSprite = player.sprite[player.spriteCycle[player.currentFrame]]
+        const position = player.getPosition()
+        ctx.save()
+        ctx.translate(position.x + player.width / 2, position.y + player.height / 2)
+        const rotation = player.getTransform().getRotation() * (Math.PI / 180)
+        ctx.rotate(rotation)
+        ctx.translate(-position.x - player.width / 2, -position.y - player.height / 2)
+        ctx.drawImage(currentSprite, position.x, position.y, 68, 48)
+        ctx.restore()
     }
 }

@@ -1,3 +1,4 @@
+import Player from "../Player";
 import { Game } from "../game";
 import UpdateInput from "./update";
 
@@ -9,3 +10,6 @@ export interface GameState {
   exit(game: Game): void;
 }
 
+export interface PlayerState {
+  render(player: Player, ctx: CanvasRenderingContext2D): void;
+}
