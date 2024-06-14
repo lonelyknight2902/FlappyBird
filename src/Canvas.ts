@@ -1,4 +1,4 @@
-import { BACKGROUND_DAY, BACKGROUND_NIGHT, DAY_NIGHT_CYCLE_TIME } from './constants'
+import { BACKGROUND_DAY, BACKGROUND_NIGHT, DAY_NIGHT_CYCLE_TIME } from './engine/constants'
 import UpdateInput from './types/update'
 
 class Canvas {

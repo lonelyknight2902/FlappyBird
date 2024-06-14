@@ -1,6 +1,6 @@
-import { GameObject } from './GameObject'
+import { GameObject } from './engine/GameObject'
 import { PlayerAliveState } from './State'
-import { BodyType, FLAP_AUDIO, FLAP_FORCE, ROTATION_ACCERATION } from './constants'
+import { BodyType, FLAP_AUDIO, FLAP_FORCE, ROTATION_ACCERATION } from './engine/constants'
 import { PlayerState } from './types/state'
 import UpdateInput from './types/update'
 

@@ -1,9 +1,9 @@
 import Player from './Player'
 import UpdateInput from './types/update'
 import Canvas from './Canvas'
-import InputHandler from './InputHandler'
+import InputHandler from './engine/InputHandler'
 import Obstacle from './Obstacle'
-import Vector2 from './Vector2'
+import Vector2 from './engine/Vector2'
 import Base from './Base'
 import {
     BASE_SPEED,
@@ -13,10 +13,10 @@ import {
     PIPE_GAP,
     PIPE_SOURCE,
     PIPE_STARTING_OFFSET,
-} from './constants'
+} from './engine/constants'
 import { GameState } from './types/state'
 import { GameHomeState } from './State'
-import TriggerObject from './TriggerOject'
+import TriggerObject from './engine/TriggerOject'
 import ScoreManager from './ScoreManager'
 
 export class Game {

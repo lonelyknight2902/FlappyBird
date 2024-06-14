@@ -1,5 +1,5 @@
-import { GameObject } from './GameObject'
-import { BodyType } from './constants'
+import { GameObject } from './engine/GameObject'
+import { BodyType } from './engine/constants'
 
 class Base extends GameObject {
     private sprite: HTMLImageElement

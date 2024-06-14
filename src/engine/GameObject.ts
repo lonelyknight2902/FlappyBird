@@ -2,7 +2,7 @@ import { BoxCollider, Collider } from './Collider'
 import Transform from './Transform'
 import Vector2 from './Vector2'
 import { BodyType, GRAVITAIONAL_ACCELERATION } from './constants'
-import UpdateInput from './types/update'
+import UpdateInput from '../types/update'
 
 export class GameObject {
     protected transform: Transform

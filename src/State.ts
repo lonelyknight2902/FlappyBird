@@ -1,7 +1,7 @@
-import ButtonElement from './ButtonElement'
+import ButtonElement from './engine/ButtonElement'
 import Player from './Player'
-import TextElement from './TextElement'
-import { FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, TriggerState } from './constants'
+import TextElement from './engine/TextElement'
+import { FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, TriggerState } from './engine/constants'
 import { Game } from './game'
 import { GameState, PlayerState } from './types/state'
 import UpdateInput from './types/update'
@@ -68,11 +68,11 @@ export class GameHomeState implements GameState {
             'bold',
             true
         )
-        const onClick = function () {
+        const onClick = () => {
             game.state = new GameStartState()
             game.state.enter(game)
         }
-        onClick.bind(this)
+        // onClick.bind(this)
         this._startButton.onClick = onClick
         this._gameTitle = new TextElement(
             game.canvas.canvas.width / 2,
