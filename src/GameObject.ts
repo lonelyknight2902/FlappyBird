@@ -97,6 +97,10 @@ export class GameObject {
     public setRotation(rotation: number): void {
         this.transform.setRotation(rotation)
     }
+
+    public getTransform(): Transform {
+        return this.transform
+    }
 }
 
 class Velocity {
