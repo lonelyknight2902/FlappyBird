@@ -1,20 +1,100 @@
+import ButtonElement from './ButtonElement'
 import Player from './Player'
-import {
-    FADE_OUT_TIME,
-    FLAP_RATE,
-    FLASH_IN_OUT_TIME,
-    TriggerState,
-} from './constants'
+import TextElement from './TextElement'
+import { FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, TriggerState } from './constants'
 import { Game } from './game'
 import { GameState, PlayerState } from './types/state'
 import UpdateInput from './types/update'
 
+export class GameHomeState implements GameState {
+    private _start: number
+    private _end: number
+    private _overlayAlpha: number
+    private _startButton: ButtonElement
+    private _gameTitle: TextElement
+    handleInput(game: Game): GameState | null {
+        // if ((game.inputHandler.isKeyDown('Space')) && Date.now() > this._end) {
+        //     return new GameStartState()
+        // }
+        return null
+    }
+    update(game: Game, updateInput: UpdateInput): void {
+        game.bases.forEach((base) => {
+            base.update(updateInput)
+        })
+        game.baseSpawner()
+        console.log(game.inputHandler.mouse)
+        console.log(
+            this._startButton.isHovered(game.inputHandler.mouse.x, game.inputHandler.mouse.y)
+        )
+        this._startButton.update(game.inputHandler)
+    }
+
+    render(game: Game): void {
+        const canvas = game.canvas.canvas
+        const ctx = game.canvas.getContext()
+        if (ctx === null) {
+            return
+        }
+        game.canvas.clear()
+        game.canvas.renderBackground()
+        game.player.render(ctx)
+        game.bases.forEach((base) => {
+            base.render(ctx)
+        })
+        this._startButton.render(ctx)
+        this._gameTitle.render(ctx)
+        const alpha = Math.max(0, this._overlayAlpha - (Date.now() - this._start) / FADE_OUT_TIME)
+        ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }
+
+    enter(game: Game): void {
+        this._start = Date.now()
+        this._end = this._start + FADE_OUT_TIME
+        this._overlayAlpha = 1
+        game.player.setRotation(0)
+        game.player.setRotationSpeed(0)
+        game.canvas.reset()
+        game.player.state = new PlayerAliveState()
+        this._startButton = new ButtonElement(
+            game.canvas.canvas.width / 2 - 85,
+            500,
+            170,
+            50,
+            'Start',
+            'Courier New',
+            20,
+            'bold',
+            true
+        )
+        const onClick = function () {
+            game.state = new GameStartState()
+            game.state.enter(game)
+        }
+        onClick.bind(this)
+        this._startButton.onClick = onClick
+        this._gameTitle = new TextElement(
+            game.canvas.canvas.width / 2,
+            200,
+            'Flappy Bird',
+            'Courier New',
+            50,
+            'bold',
+            true
+        )
+    }
+    exit(game: Game): void {
+        return
+    }
+}
 export class GameStartState implements GameState {
     private _start: number
     private _end: number
     private _overlayAlpha: number
+    private _getReadyTitle: TextElement
     handleInput(game: Game): GameState | null {
-        if (game.inputHandler.isKeyDown('Space') && Date.now() > this._end) {
+        if ((game.inputHandler.isKeyDown('Space') || game.inputHandler.isTouchStart()) && Date.now() > this._end) {
             return new GamePlayState()
         }
         return null
@@ -38,10 +118,10 @@ export class GameStartState implements GameState {
         game.bases.forEach((base) => {
             base.render(ctx)
         })
-        game.gameTitle.render(ctx)
-        const alpha = Math.max(0, this._overlayAlpha - (Date.now() - this._start) / FADE_OUT_TIME)
-        ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        this._getReadyTitle.render(ctx)
+        // const alpha = Math.max(0, this._overlayAlpha - (Date.now() - this._start) / FADE_OUT_TIME)
+        // ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`
+        // ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
     enter(game: Game): void {
@@ -52,6 +132,15 @@ export class GameStartState implements GameState {
         game.player.setRotationSpeed(0)
         game.canvas.reset()
         game.player.state = new PlayerAliveState()
+        this._getReadyTitle = new TextElement(
+            game.canvas.canvas.width / 2,
+            200,
+            'Get Ready',
+            'Courier New',
+            50,
+            'bold',
+            true
+        )
     }
     exit(game: Game): void {
         return
@@ -59,8 +148,9 @@ export class GameStartState implements GameState {
 }
 
 export class GamePlayState implements GameState {
+    private _scoreText: TextElement
     handleInput(game: Game): GameState | null {
-        if (game.inputHandler.isKeyDown('Space')) {
+        if (game.inputHandler.isKeyDown('Space') || game.inputHandler.isTouchStart()) {
             game.player.flap()
             return null
         }
@@ -111,7 +201,7 @@ export class GamePlayState implements GameState {
             if (trigger.triggerUpdate([game.player]) === TriggerState.EXIT) {
                 game.scoreManager.increaseScore()
                 game.scoreManager.update()
-                game.scoreText.setText(game.scoreManager.score.toString())
+                this._scoreText.setText(game.scoreManager.score.toString())
             }
         }
 
@@ -128,7 +218,6 @@ export class GamePlayState implements GameState {
             game.state = new GameOverState()
             game.state.enter(game)
         }
-
     }
 
     render(game: Game): void {
@@ -150,11 +239,20 @@ export class GamePlayState implements GameState {
         game.triggerAreas.forEach((trigger) => {
             trigger.render(ctx)
         })
-        game.scoreText.render(ctx)
+        this._scoreText.render(ctx)
     }
 
     enter(game: Game): void {
         game.player.flap()
+        this._scoreText = new TextElement(
+            game.canvas.canvas.width / 2,
+            200,
+            game.scoreManager.score.toString(),
+            'Courier New',
+            40,
+            'bold',
+            true
+        )
     }
     exit(game: Game): void {
         return
@@ -164,13 +262,15 @@ export class GamePlayState implements GameState {
 export class GameOverState {
     private _start: number
     private _end: number
+    private _gameOverTitle: TextElement
+    private _finalScoreText: TextElement
+    private _highScoreText: TextElement
     handleInput(game: Game): GameState | null {
-        if (game.inputHandler.isKeyDown('Space') && Date.now() - this._start > 1000) {
+        if ((game.inputHandler.isKeyDown('Space') || game.inputHandler.isTouchStart()) && Date.now() - this._start > 1000) {
             game.player.setPosition(75, 300)
             game.obstacleInit()
             game.scoreManager.resetScore()
-            game.scoreText.setText('0')
-            return new GameStartState()
+            return new GameHomeState()
         }
         return null
     }
@@ -201,11 +301,11 @@ export class GameOverState {
         game.bases.forEach((base) => {
             base.render(ctx)
         })
-        game.gameOverTitle.render(ctx)
-        game.finalScoreText.setText('Score: ' + game.scoreManager.score.toString())
-        game.highScoreText.setText('High score: ' + game.scoreManager.highScore.toString())
-        game.finalScoreText.render(ctx)
-        game.highScoreText.render(ctx)
+        this._gameOverTitle.render(ctx)
+        this._finalScoreText.setText('Score: ' + game.scoreManager.score.toString())
+        this._highScoreText.setText('High score: ' + game.scoreManager.highScore.toString())
+        this._finalScoreText.render(ctx)
+        this._highScoreText.render(ctx)
         let alpha: number
         if (Date.now() - this._start <= FLASH_IN_OUT_TIME / 2) {
             alpha = Math.min(1, (Date.now() - this._start) / FLASH_IN_OUT_TIME / 2)
@@ -221,6 +321,33 @@ export class GameOverState {
         this._start = Date.now()
         this._end = this._start + FLASH_IN_OUT_TIME
         game.player.state = new PlayerDieState()
+        this._gameOverTitle = new TextElement(
+            game.canvas.canvas.width / 2,
+            200,
+            'Game Over',
+            'Courier New',
+            50,
+            'bold',
+            true
+        )
+        this._finalScoreText = new TextElement(
+            game.canvas.canvas.width / 2,
+            300,
+            'Final Score: ' + game.scoreManager.score.toString(),
+            'Courier New',
+            40,
+            'bold',
+            true
+        )
+        this._highScoreText = new TextElement(
+            game.canvas.canvas.width / 2,
+            350,
+            'High Score: ' + game.scoreManager.highScore.toString(),
+            'Courier New',
+            20,
+            'bold',
+            true
+        )
     }
     exit(game: Game): void {
         return

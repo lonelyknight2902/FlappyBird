@@ -1,7 +1,6 @@
 import Player from './Player'
 import UpdateInput from './types/update'
 import Canvas from './Canvas'
-// import Vector2 from './Vector2'
 import InputHandler from './InputHandler'
 import Obstacle from './Obstacle'
 import Vector2 from './Vector2'
@@ -16,8 +15,7 @@ import {
     PIPE_STARTING_OFFSET,
 } from './constants'
 import { GameState } from './types/state'
-import { GameStartState } from './State'
-import TextElement from './TextElement'
+import { GameHomeState } from './State'
 import TriggerObject from './TriggerOject'
 import ScoreManager from './ScoreManager'
 
@@ -31,11 +29,6 @@ export class Game {
     public inputHandler: InputHandler
     public state: GameState
     public hitAudio: HTMLAudioElement
-    public gameTitle: TextElement
-    public gameOverTitle: TextElement
-    public scoreText: TextElement
-    public finalScoreText: TextElement
-    public highScoreText: TextElement
     public triggerAreas: TriggerObject[]
     constructor() {
         console.log('Game created')
@@ -45,54 +38,9 @@ export class Game {
         this.player.setPosition(75, 300)
         this.scoreManager = new ScoreManager()
         this.canvas = new Canvas(450, 800)
-        this.gameTitle = new TextElement(
-            this.canvas.canvas.width / 2,
-            200,
-            'Flappy Bird',
-            'Courier New',
-            50,
-            'bold',
-            true
-        )
-        this.gameOverTitle = new TextElement(
-            this.canvas.canvas.width / 2,
-            200,
-            'Game Over',
-            'Courier New',
-            50,
-            'bold',
-            true
-        )
-        this.scoreText = new TextElement(
-            this.canvas.canvas.width / 2,
-            200,
-            this.scoreManager.score.toString(),
-            'Courier New',
-            40,
-            'bold',
-            true
-        )
-        this.finalScoreText = new TextElement(
-            this.canvas.canvas.width / 2,
-            300,
-            'Final Score: ' + this.scoreManager.score.toString(),
-            'Courier New',
-            40,
-            'bold',
-            true
-        )
-        this.highScoreText = new TextElement(
-            this.canvas.canvas.width / 2,
-            350,
-            'High Score: ' + this.scoreManager.highScore.toString(),
-            'Courier New',
-            20,
-            'bold',
-            true
-        )
         this.obstacleInit()
         this.bases = []
-        this.state = new GameStartState()
+        this.state = new GameHomeState()
         this.state.enter(this)
         for (let i = 0; i < 3; i++) {
             const base = new Base(450, 150, BodyType.STATIC_BODY)
@@ -101,7 +49,7 @@ export class Game {
             base.setSpeed(BASE_SPEED)
             base.setDirection(new Vector2(-1, 0))
         }
-        this.inputHandler = new InputHandler()
+        this.inputHandler = new InputHandler(this.canvas.canvas)
         this.hitAudio = document.createElement('audio')
         this.hitAudio.src = 'assets/audio/hit.wav'
         this.lastTime = window.performance.now()
