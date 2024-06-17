@@ -1,7 +1,7 @@
 import ButtonElement from './engine/ButtonElement'
 import Player from './Player'
 import TextElement from './engine/TextElement'
-import { FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, ROTATION_ACCERATION, TriggerState } from './engine/constants'
+import { BASE_SPEED, FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, ROTATION_ACCERATION, TriggerState } from './engine/constants'
 import { GameState, PlayerState } from './types/state'
 import UpdateInput from './types/update'
 import GameScene from './GameScene'
@@ -60,6 +60,9 @@ export class GameHomeState implements GameState {
         game.player.setRotation(0)
         game.player.setRotationSpeed(0)
         game.player.setRotationAcceleration(0)
+        game.bases.children.forEach((base) => {
+            base.setSpeed(BASE_SPEED)
+        })
         const canvas = Canvas.getInstance(450, 800)
         canvas.reset()
         game.player.state = new PlayerAliveState()
