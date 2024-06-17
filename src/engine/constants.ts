@@ -7,7 +7,7 @@ export enum BodyType {
 export const CANVAS_WIDTH = 450
 export const CANVAS_HEIGHT = 800
 export const FLAP_RATE = 50
-export const BASE_SPEED = 100
+export const BASE_SPEED = 200
 export const PIPE_STARTING_OFFSET = 900
 export const PIPE_DISTANCE = 400
 export const PIPE_GAP = 200

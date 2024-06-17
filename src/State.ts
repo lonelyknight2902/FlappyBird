@@ -176,7 +176,6 @@ export class GamePlayState implements GameState {
         })
         game.obstacles.forEach((obstacle) => {
             obstacle.update(updateInput)
-            obstacle.update(updateInput)
         })
         game.baseSpawner()
         game.obstacleSpawner()
