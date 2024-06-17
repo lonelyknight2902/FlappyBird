@@ -14,7 +14,8 @@ export class GameObject {
     private _name: string
     public width: number
     public height: number
-    constructor(width: number, height: number, bodyType: BodyType) {
+    public display: boolean = true
+    constructor(width: number, height: number, bodyType: BodyType, name = 'GameObject') {
         this.transform = new Transform(0, 0, 0, 1)
         this.velocity = new Velocity()
         this.width = width
@@ -26,6 +27,7 @@ export class GameObject {
             this.transform.getPosition().y
         )
         this.bodyType = bodyType
+        this._name = name
     }
 
     public get name(): string {
@@ -125,6 +127,7 @@ export class GameObject {
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
+        if (!this.display) return
         this.children.forEach((child) => {
             child.render(ctx)
         })

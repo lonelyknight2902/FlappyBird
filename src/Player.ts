@@ -19,7 +19,7 @@ class Player extends GameObject {
     public static player: Player
 
     constructor() {
-        super(68, 48, BodyType.RIGID_BODY)
+        super(68, 48, BodyType.RIGID_BODY, 'Player')
         console.log('Player created')
         this._sprite = []
         this._spriteSource = [
@@ -38,7 +38,7 @@ class Player extends GameObject {
         this._flapAudio = document.createElement('audio')
         this._flapAudio.src = FLAP_AUDIO
         this._rotationSpeed = 0
-        this._rotationAcceleration = ROTATION_ACCERATION
+        this._rotationAcceleration = 0
         this._start = Date.now()
         this._state = new PlayerAliveState()
         Player.player = this
@@ -67,7 +67,6 @@ class Player extends GameObject {
             this._rotationSpeed += (this._rotationAcceleration * updateInput.delta) / 1000
         }
         this.transform.setRotation(rotation)
-        this.updateGravity(updateInput)
     }
 
     set spriteSource(value: string) {
@@ -75,6 +74,7 @@ class Player extends GameObject {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
+        if (!this.display) return
         this._state.render(this, ctx)
     }
 
@@ -96,6 +96,10 @@ class Player extends GameObject {
 
     public setRotationSpeed(value: number): void {
         this._rotationSpeed = value
+    }
+
+    public setRotationAcceleration(value: number): void {
+        this._rotationAcceleration = value
     }
 
     public get start(): number {

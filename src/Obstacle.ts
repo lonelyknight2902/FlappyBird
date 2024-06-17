@@ -5,7 +5,7 @@ class Obstacle extends GameObject {
     private sprite: HTMLImageElement
     private spriteSource: string
     constructor(width: number, height: number, spriteSource: string, bodyType: BodyType) {
-        super(width, height, bodyType)
+        super(width, height, bodyType, 'Obstacle')
         console.log('Obstacle created')
         this.sprite = document.createElement('img')
         this.spriteSource = spriteSource
@@ -15,6 +15,7 @@ class Obstacle extends GameObject {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
+        if (!this.display) return
         const position = this.getWorldPosition()
         super.render(ctx)
         ctx.drawImage(this.sprite, position.x, position.y, 104, 640)

@@ -1,7 +1,7 @@
 import ButtonElement from './engine/ButtonElement'
 import Player from './Player'
 import TextElement from './engine/TextElement'
-import { FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, TriggerState } from './engine/constants'
+import { FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, ROTATION_ACCERATION, TriggerState } from './engine/constants'
 import { GameState, PlayerState } from './types/state'
 import UpdateInput from './types/update'
 import GameScene from './GameScene'
@@ -17,20 +17,21 @@ export class GameHomeState implements GameState {
     private _gameTitle: TextElement
     handleInput(game: GameScene): GameState | null {
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
-        if ((inputHandler.isKeyDown('Space')) && Date.now() > this._end) {
+        if (inputHandler.isKeyDown('Space') && Date.now() > this._end) {
             return new GameStartState()
         }
         return null
     }
     update(game: GameScene, updateInput: UpdateInput): void {
-        game.bases.forEach((base) => {
-            base.update(updateInput)
+        // game.bases.children.forEach((base) => {
+        //     base.update(updateInput)
+        // })
+        console.log(game.gameObjects)
+        game.gameObjects.forEach((obj) => {
+            obj.update(updateInput)
         })
         game.baseSpawner()
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
-        console.log(
-            this._startButton.isHovered(inputHandler.mouse.x, inputHandler.mouse.y)
-        )
         this._startButton.update(inputHandler)
     }
 
@@ -43,7 +44,7 @@ export class GameHomeState implements GameState {
         canvas.clear()
         canvas.renderBackground()
         game.player.render(ctx)
-        game.bases.forEach((base) => {
+        game.bases.children.forEach((base) => {
             base.render(ctx)
         })
         this._startButton.render(ctx)
@@ -59,6 +60,7 @@ export class GameHomeState implements GameState {
         this._overlayAlpha = 1
         game.player.setRotation(0)
         game.player.setRotationSpeed(0)
+        game.player.setRotationAcceleration(0)
         const canvas = Canvas.getInstance(450, 800)
         canvas.reset()
         game.player.state = new PlayerAliveState()
@@ -109,8 +111,8 @@ export class GameStartState implements GameState {
         return null
     }
     update(game: GameScene, updateInput: UpdateInput): void {
-        game.bases.forEach((base) => {
-            base.update(updateInput)
+        game.gameObjects.forEach((obj) => {
+            obj.update(updateInput)
         })
         game.baseSpawner()
     }
@@ -124,7 +126,7 @@ export class GameStartState implements GameState {
         canvas.clear()
         canvas.renderBackground()
         game.player.render(ctx)
-        game.bases.forEach((base) => {
+        game.bases.children.forEach((base) => {
             base.render(ctx)
         })
         this._getReadyTitle.render(ctx)
@@ -170,18 +172,15 @@ export class GamePlayState implements GameState {
 
     update(game: GameScene, updateInput: UpdateInput): void {
         game.canvas.update(updateInput)
-        game.player.update(updateInput)
-        game.bases.forEach((base) => {
-            base.update(updateInput)
-        })
-        game.obstacles.forEach((obstacle) => {
-            obstacle.update(updateInput)
+        game.gameObjects.forEach((obj) => {
+            obj.update(updateInput)
+            obj.updateGravity(updateInput)
         })
         game.baseSpawner()
         game.obstacleSpawner()
         let collision = false
         console.log(game.obstacles)
-        for (const obstacle of game.obstacles) {
+        for (const obstacle of game.obstacles.children) {
             if (
                 game.player.collider.checkCollision(obstacle.children[0].collider) ||
                 game.player.collider.checkCollision(obstacle.children[1].collider)
@@ -194,14 +193,18 @@ export class GamePlayState implements GameState {
                 break
             }
 
-            if (obstacle.children.filter((obj) => obj instanceof TriggerObject)[0].triggerUpdate([game.player]) === TriggerState.EXIT) {
+            if (
+                obstacle.children
+                    .filter((obj) => obj instanceof TriggerObject)[0]
+                    .triggerUpdate([game.player]) === TriggerState.EXIT
+            ) {
                 game.scoreManager.increaseScore()
                 game.scoreManager.update()
                 this._scoreText.setText(game.scoreManager.score.toString())
             }
         }
 
-        for (const base of game.bases) {
+        for (const base of game.bases.children) {
             if (game.player.collider.checkCollision(base.collider)) {
                 console.log('Base Collision detected')
                 // game.player.handleCollision(updateInput, base.collider))
@@ -232,11 +235,11 @@ export class GamePlayState implements GameState {
         }
         game.canvas.clear()
         game.canvas.renderBackground()
-        game.obstacles.forEach((obstacle) => {
+        game.obstacles.children.forEach((obstacle) => {
             obstacle.render(ctx)
         })
         game.player.render(ctx)
-        game.bases.forEach((base) => {
+        game.bases.children.forEach((base) => {
             base.render(ctx)
         })
         this._scoreText.render(ctx)
@@ -244,6 +247,7 @@ export class GamePlayState implements GameState {
 
     enter(game: GameScene): void {
         game.player.flap()
+        game.player.setRotationAcceleration(ROTATION_ACCERATION)
         this._scoreText = new TextElement(
             game.canvas.canvas.width / 2,
             200,
@@ -281,7 +285,8 @@ export class GameOverState implements GameState {
 
     update(game: GameScene, updateInput: UpdateInput): void {
         game.player.update(updateInput)
-        for (const base of game.bases) {
+        game.player.updateGravity(updateInput)
+        for (const base of game.bases.children) {
             if (game.player.collider.checkCollision(base.collider)) {
                 // game.player.handleCollision(updateInput, base.collider)
                 game.player.setSpeed(0)
@@ -297,11 +302,11 @@ export class GameOverState implements GameState {
         }
         game.canvas.clear()
         game.canvas.renderBackground()
-        game.obstacles.forEach((obstacle) => {
+        game.obstacles.children.forEach((obstacle) => {
             obstacle.render(ctx)
         })
         game.player.render(ctx)
-        game.bases.forEach((base) => {
+        game.bases.children.forEach((base) => {
             base.render(ctx)
         })
         this._gameOverTitle.render(ctx)
