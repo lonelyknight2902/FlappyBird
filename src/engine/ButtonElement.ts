@@ -19,17 +19,15 @@ class ButtonElement extends UIElement {
         isCenteredText = false
     ) {
         super(x, y)
-        if (isCenteredText) {
-            this._text = new TextElement(
-                x + width / 2,
-                y + height / 2,
-                text,
-                family,
-                size,
-                weight,
-                isCenteredText
-            )
-        }
+        this._text = new TextElement(
+            x + width / 2,
+            y + height / 2,
+            text,
+            family,
+            size,
+            weight,
+            isCenteredText
+        )
         this._width = width
         this._height = height
     }
