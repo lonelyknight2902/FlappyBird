@@ -4,8 +4,6 @@ import { BodyType } from './engine/constants'
 class Base extends GameObject {
     private sprite: HTMLImageElement
     private spriteSource: string
-    private width: number
-    private height: number
     constructor(width: number, height: number, bodyType: BodyType) {
         super(width, height, bodyType)
         this.sprite = document.createElement('img')
@@ -17,14 +15,6 @@ class Base extends GameObject {
     render(ctx: CanvasRenderingContext2D) {
         const position = this.transform.getPosition()
         ctx.drawImage(this.sprite, position.x, position.y, this.width, this.height)
-    }
-
-    public getWidth(): number {
-        return this.width
-    }
-
-    public getHeight(): number {
-        return this.height
     }
 }
 

@@ -11,13 +11,12 @@ class Player extends GameObject {
     private _frameCount: number
     private _currentFrame: number
     private _flapAudio: HTMLAudioElement
-    private _width: number
-    private _height: number
     private _rotationSpeed: number
     private _rotationAcceleration: number
     private _flapped = false
     private _start: number
     private _state: PlayerState
+    public static player: Player
 
     constructor() {
         super(68, 48, BodyType.RIGID_BODY)
@@ -40,10 +39,17 @@ class Player extends GameObject {
         this._flapAudio.src = FLAP_AUDIO
         this._rotationSpeed = 0
         this._rotationAcceleration = ROTATION_ACCERATION
-        this._width = 68
-        this._height = 48
         this._start = Date.now()
         this._state = new PlayerAliveState()
+        Player.player = this
+    }
+
+    public static getInstance(): Player {
+        if (!Player.player) {
+            Player.player = new Player()
+            console.log('Player created')
+        }
+        return Player.player
     }
 
     update(updateInput: UpdateInput): void {
@@ -114,14 +120,6 @@ class Player extends GameObject {
 
     public get sprite(): HTMLImageElement[] {
         return this._sprite
-    }
-
-    public get width(): number {
-        return this._width
-    }
-
-    public get height(): number {
-        return this._height
     }
 
     public set state(value: PlayerState) {

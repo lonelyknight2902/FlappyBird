@@ -5,6 +5,7 @@ class InputHandler {
     private _mouseClick = false
     private _canvas: HTMLCanvasElement
     private _touchStart = false
+    public static instance: InputHandler
 
     constructor(canvas: HTMLCanvasElement) {
         this._canvas = canvas
@@ -73,6 +74,13 @@ class InputHandler {
 
     public isTouchStart(): boolean {
         return this._touchStart
+    }
+
+    public static getInstance(canvas: HTMLCanvasElement): InputHandler {
+        if (!InputHandler.instance) {
+            InputHandler.instance = new InputHandler(canvas)
+        }
+        return InputHandler.instance
     }
 }
 

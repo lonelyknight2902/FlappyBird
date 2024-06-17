@@ -2,9 +2,12 @@ import ButtonElement from './engine/ButtonElement'
 import Player from './Player'
 import TextElement from './engine/TextElement'
 import { FADE_OUT_TIME, FLAP_RATE, FLASH_IN_OUT_TIME, TriggerState } from './engine/constants'
-import { Game } from './game'
 import { GameState, PlayerState } from './types/state'
 import UpdateInput from './types/update'
+import GameScene from './GameScene'
+import TriggerObject from './engine/TriggerObject'
+import InputHandler from './engine/InputHandler'
+import Canvas from './Canvas'
 
 export class GameHomeState implements GameState {
     private _start: number
@@ -12,32 +15,33 @@ export class GameHomeState implements GameState {
     private _overlayAlpha: number
     private _startButton: ButtonElement
     private _gameTitle: TextElement
-    handleInput(game: Game): GameState | null {
-        // if ((game.inputHandler.isKeyDown('Space')) && Date.now() > this._end) {
-        //     return new GameStartState()
-        // }
+    handleInput(game: GameScene): GameState | null {
+        const inputHandler = InputHandler.getInstance(game.canvas.canvas)
+        if ((inputHandler.isKeyDown('Space')) && Date.now() > this._end) {
+            return new GameStartState()
+        }
         return null
     }
-    update(game: Game, updateInput: UpdateInput): void {
+    update(game: GameScene, updateInput: UpdateInput): void {
         game.bases.forEach((base) => {
             base.update(updateInput)
         })
         game.baseSpawner()
-        console.log(game.inputHandler.mouse)
+        const inputHandler = InputHandler.getInstance(game.canvas.canvas)
         console.log(
-            this._startButton.isHovered(game.inputHandler.mouse.x, game.inputHandler.mouse.y)
+            this._startButton.isHovered(inputHandler.mouse.x, inputHandler.mouse.y)
         )
-        this._startButton.update(game.inputHandler)
+        this._startButton.update(inputHandler)
     }
 
-    render(game: Game): void {
-        const canvas = game.canvas.canvas
-        const ctx = game.canvas.getContext()
+    render(game: GameScene): void {
+        const canvas = Canvas.getInstance(450, 800)
+        const ctx = canvas.getContext()
         if (ctx === null) {
             return
         }
-        game.canvas.clear()
-        game.canvas.renderBackground()
+        canvas.clear()
+        canvas.renderBackground()
         game.player.render(ctx)
         game.bases.forEach((base) => {
             base.render(ctx)
@@ -46,19 +50,20 @@ export class GameHomeState implements GameState {
         this._gameTitle.render(ctx)
         const alpha = Math.max(0, this._overlayAlpha - (Date.now() - this._start) / FADE_OUT_TIME)
         ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.fillRect(0, 0, canvas.canvas.width, canvas.canvas.height)
     }
 
-    enter(game: Game): void {
+    enter(game: GameScene): void {
         this._start = Date.now()
         this._end = this._start + FADE_OUT_TIME
         this._overlayAlpha = 1
         game.player.setRotation(0)
         game.player.setRotationSpeed(0)
-        game.canvas.reset()
+        const canvas = Canvas.getInstance(450, 800)
+        canvas.reset()
         game.player.state = new PlayerAliveState()
         this._startButton = new ButtonElement(
-            game.canvas.canvas.width / 2 - 85,
+            canvas.canvas.width / 2 - 85,
             500,
             170,
             50,
@@ -75,7 +80,7 @@ export class GameHomeState implements GameState {
         // onClick.bind(this)
         this._startButton.onClick = onClick
         this._gameTitle = new TextElement(
-            game.canvas.canvas.width / 2,
+            canvas.canvas.width / 2,
             200,
             'Flappy Bird',
             'Courier New',
@@ -84,7 +89,7 @@ export class GameHomeState implements GameState {
             true
         )
     }
-    exit(game: Game): void {
+    exit(game: GameScene): void {
         return
     }
 }
@@ -93,27 +98,31 @@ export class GameStartState implements GameState {
     private _end: number
     private _overlayAlpha: number
     private _getReadyTitle: TextElement
-    handleInput(game: Game): GameState | null {
-        if ((game.inputHandler.isKeyDown('Space') || game.inputHandler.isTouchStart()) && Date.now() > this._end) {
+    handleInput(game: GameScene): GameState | null {
+        const inputHandler = InputHandler.getInstance(game.canvas.canvas)
+        if (
+            (inputHandler.isKeyDown('Space') || inputHandler.isTouchStart()) &&
+            Date.now() > this._end
+        ) {
             return new GamePlayState()
         }
         return null
     }
-    update(game: Game, updateInput: UpdateInput): void {
+    update(game: GameScene, updateInput: UpdateInput): void {
         game.bases.forEach((base) => {
             base.update(updateInput)
         })
         game.baseSpawner()
     }
 
-    render(game: Game): void {
-        const canvas = game.canvas.canvas
-        const ctx = game.canvas.getContext()
+    render(game: GameScene): void {
+        const canvas = Canvas.getInstance(450, 800)
+        const ctx = canvas.getContext()
         if (ctx === null) {
             return
         }
-        game.canvas.clear()
-        game.canvas.renderBackground()
+        canvas.clear()
+        canvas.renderBackground()
         game.player.render(ctx)
         game.bases.forEach((base) => {
             base.render(ctx)
@@ -124,7 +133,7 @@ export class GameStartState implements GameState {
         // ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
-    enter(game: Game): void {
+    enter(game: GameScene): void {
         this._start = Date.now()
         this._end = this._start + FADE_OUT_TIME
         this._overlayAlpha = 1
@@ -142,15 +151,16 @@ export class GameStartState implements GameState {
             true
         )
     }
-    exit(game: Game): void {
+    exit(game: GameScene): void {
         return
     }
 }
 
 export class GamePlayState implements GameState {
     private _scoreText: TextElement
-    handleInput(game: Game): GameState | null {
-        if (game.inputHandler.isKeyDown('Space') || game.inputHandler.isTouchStart()) {
+    handleInput(game: GameScene): GameState | null {
+        const inputHandler = InputHandler.getInstance(game.canvas.canvas)
+        if (inputHandler.isKeyDown('Space') || inputHandler.isTouchStart()) {
             game.player.flap()
             return null
         }
@@ -158,50 +168,45 @@ export class GamePlayState implements GameState {
         return null
     }
 
-    update(game: Game, updateInput: UpdateInput): void {
+    update(game: GameScene, updateInput: UpdateInput): void {
         game.canvas.update(updateInput)
         game.player.update(updateInput)
         game.bases.forEach((base) => {
             base.update(updateInput)
         })
         game.obstacles.forEach((obstacle) => {
-            obstacle[0].update(updateInput)
-            obstacle[1].update(updateInput)
-        })
-        game.triggerAreas.forEach((trigger) => {
-            trigger.update(updateInput)
+            obstacle.update(updateInput)
+            obstacle.update(updateInput)
         })
         game.baseSpawner()
         game.obstacleSpawner()
         let collision = false
+        console.log(game.obstacles)
         for (const obstacle of game.obstacles) {
             if (
-                game.player.collider.checkCollision(obstacle[0].collider) ||
-                game.player.collider.checkCollision(obstacle[1].collider)
+                game.player.collider.checkCollision(obstacle.children[0].collider) ||
+                game.player.collider.checkCollision(obstacle.children[1].collider)
             ) {
-                console.log('Collision detected')
+                console.log('Obstacle Collision detected')
+                console.log(game.player.collider)
+                console.log(obstacle.children[0].collider)
                 // game.player.handleCollision(updateInput, obstacle[0].collider)
                 collision = true
                 break
+            }
+
+            if (obstacle.children.filter((obj) => obj instanceof TriggerObject)[0].triggerUpdate([game.player]) === TriggerState.EXIT) {
+                game.scoreManager.increaseScore()
+                game.scoreManager.update()
+                this._scoreText.setText(game.scoreManager.score.toString())
             }
         }
 
         for (const base of game.bases) {
             if (game.player.collider.checkCollision(base.collider)) {
-                console.log('Collision detected')
-                // game.player.handleCollision(updateInput, base.collider)
+                console.log('Base Collision detected')
+                // game.player.handleCollision(updateInput, base.collider))
                 collision = true
-                game.player.setSpeed(0)
-                game.state = new GameOverState()
-                game.state.enter(game)
-            }
-        }
-        for (const trigger of game.triggerAreas) {
-            // trigger.update(updateInput)
-            if (trigger.triggerUpdate([game.player]) === TriggerState.EXIT) {
-                game.scoreManager.increaseScore()
-                game.scoreManager.update()
-                this._scoreText.setText(game.scoreManager.score.toString())
             }
         }
 
@@ -220,7 +225,7 @@ export class GamePlayState implements GameState {
         }
     }
 
-    render(game: Game): void {
+    render(game: GameScene): void {
         const canvas = game.canvas.canvas
         const ctx = canvas.getContext('2d')
         if (ctx === null) {
@@ -229,20 +234,16 @@ export class GamePlayState implements GameState {
         game.canvas.clear()
         game.canvas.renderBackground()
         game.obstacles.forEach((obstacle) => {
-            obstacle[0].render(ctx)
-            obstacle[1].render(ctx)
+            obstacle.render(ctx)
         })
         game.player.render(ctx)
         game.bases.forEach((base) => {
             base.render(ctx)
         })
-        game.triggerAreas.forEach((trigger) => {
-            trigger.render(ctx)
-        })
         this._scoreText.render(ctx)
     }
 
-    enter(game: Game): void {
+    enter(game: GameScene): void {
         game.player.flap()
         this._scoreText = new TextElement(
             game.canvas.canvas.width / 2,
@@ -254,28 +255,32 @@ export class GamePlayState implements GameState {
             true
         )
     }
-    exit(game: Game): void {
+    exit(game: GameScene): void {
         return
     }
 }
 
-export class GameOverState {
+export class GameOverState implements GameState {
     private _start: number
     private _end: number
     private _gameOverTitle: TextElement
     private _finalScoreText: TextElement
     private _highScoreText: TextElement
-    handleInput(game: Game): GameState | null {
-        if ((game.inputHandler.isKeyDown('Space') || game.inputHandler.isTouchStart()) && Date.now() - this._start > 1000) {
+    handleInput(game: GameScene): GameState | null {
+        const inputHandler = InputHandler.getInstance(game.canvas.canvas)
+        if (
+            (inputHandler.isKeyDown('Space') || inputHandler.isTouchStart()) &&
+            Date.now() - this._start > 1000
+        ) {
             game.player.setPosition(75, 300)
-            game.obstacleInit()
+            game.initObstacle()
             game.scoreManager.resetScore()
             return new GameHomeState()
         }
         return null
     }
 
-    update(game: Game, updateInput: UpdateInput): void {
+    update(game: GameScene, updateInput: UpdateInput): void {
         game.player.update(updateInput)
         for (const base of game.bases) {
             if (game.player.collider.checkCollision(base.collider)) {
@@ -285,7 +290,7 @@ export class GameOverState {
         }
     }
 
-    render(game: Game): void {
+    render(game: GameScene): void {
         const canvas = game.canvas.canvas
         const ctx = canvas.getContext('2d')
         if (ctx === null) {
@@ -294,8 +299,7 @@ export class GameOverState {
         game.canvas.clear()
         game.canvas.renderBackground()
         game.obstacles.forEach((obstacle) => {
-            obstacle[0].render(ctx)
-            obstacle[1].render(ctx)
+            obstacle.render(ctx)
         })
         game.player.render(ctx)
         game.bases.forEach((base) => {
@@ -316,7 +320,7 @@ export class GameOverState {
         ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
-    enter(game: Game): void {
+    enter(game: GameScene): void {
         console.log('Game over')
         this._start = Date.now()
         this._end = this._start + FLASH_IN_OUT_TIME
@@ -349,7 +353,7 @@ export class GameOverState {
             true
         )
     }
-    exit(game: Game): void {
+    exit(game: GameScene): void {
         return
     }
 }

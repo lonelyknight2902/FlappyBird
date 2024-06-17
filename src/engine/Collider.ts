@@ -8,6 +8,7 @@ export abstract class Collider {
     abstract checkCollision(other: Collider): boolean
     abstract checkCollisionWithCircle(other: CircleCollider): boolean
     abstract checkCollisionWithBox(other: BoxCollider): boolean
+    abstract setPosition(x: number, y: number): void
 }
 
 export class CircleCollider extends Collider {
@@ -45,6 +46,10 @@ export class CircleCollider extends Collider {
 
     public get radius(): number {
         return this._radius
+    }
+
+    public setPosition(x: number, y: number): void {
+        this._center = new Vector2(x, y)
     }
 }
 
@@ -90,5 +95,9 @@ export class BoxCollider extends Collider {
             position.y < otherPosition.y + other.height &&
             position.y + this.height > otherPosition.y
         )
+    }
+
+    public setPosition(x: number, y: number): void {
+        this.transform.setPosition(x, y)
     }
 }

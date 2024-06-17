@@ -4,12 +4,8 @@ import { BodyType } from './engine/constants'
 class Obstacle extends GameObject {
     private sprite: HTMLImageElement
     private spriteSource: string
-    private width: number
-    private height: number
     constructor(width: number, height: number, spriteSource: string, bodyType: BodyType) {
         super(width, height, bodyType)
-        this.width = width
-        this.height = height
         console.log('Obstacle created')
         this.sprite = document.createElement('img')
         this.spriteSource = spriteSource
@@ -19,16 +15,9 @@ class Obstacle extends GameObject {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        const position = this.transform.getPosition()
+        const position = this.getWorldPosition()
+        super.render(ctx)
         ctx.drawImage(this.sprite, position.x, position.y, 104, 640)
-    }
-
-    public getWidth(): number {
-        return this.width
-    }
-
-    public getHeight(): number {
-        return this.height
     }
 }
 
