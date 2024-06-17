@@ -48,6 +48,7 @@ class ButtonElement extends UIElement {
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
+        if (!this.display) return
         ctx.fillStyle = '#E06119'
         ctx.fillRect(this.getPosition().x, this.getPosition().y, this._width, this._height)
         this._text.render(ctx)

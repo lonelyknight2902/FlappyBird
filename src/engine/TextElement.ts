@@ -28,6 +28,7 @@ class TextElement extends UIElement {
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
+        if (!this.display) return
         ctx.font = `${this._weight} ${this._size}px ${this._family}`
         ctx.fillStyle = 'white'
         if (this._isCentered) {
