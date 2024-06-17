@@ -26,7 +26,6 @@ export class GameHomeState implements GameState {
         // game.bases.children.forEach((base) => {
         //     base.update(updateInput)
         // })
-        console.log(game.gameObjects)
         game.gameObjects.forEach((obj) => {
             obj.update(updateInput)
         })
@@ -248,6 +247,7 @@ export class GamePlayState implements GameState {
     enter(game: GameScene): void {
         game.player.flap()
         game.player.setRotationAcceleration(ROTATION_ACCERATION)
+        game.initObstacle()
         this._scoreText = new TextElement(
             game.canvas.canvas.width / 2,
             200,
@@ -284,8 +284,10 @@ export class GameOverState implements GameState {
     }
 
     update(game: GameScene, updateInput: UpdateInput): void {
-        game.player.update(updateInput)
-        game.player.updateGravity(updateInput)
+        game.gameObjects.forEach((obj) => {
+            obj.update(updateInput)
+            obj.updateGravity(updateInput)
+        })
         for (const base of game.bases.children) {
             if (game.player.collider.checkCollision(base.collider)) {
                 // game.player.handleCollision(updateInput, base.collider)
@@ -356,6 +358,12 @@ export class GameOverState implements GameState {
             'bold',
             true
         )
+        game.bases.children.forEach((base) => {
+            base.setSpeed(0)
+        })
+        game.obstacles.children.forEach((obstacle) => {
+            obstacle.setSpeed(0)
+        })
     }
     exit(game: GameScene): void {
         return

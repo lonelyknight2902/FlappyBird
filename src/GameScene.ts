@@ -38,8 +38,7 @@ class GameScene extends Scene {
         this.player.setPosition(75, 300)
         this.addGameObject(this.player)
         this.scoreManager = new ScoreManager()
-        this.initObstacle()
-        this.bases = new GameObject(0, 0, BodyType.STATIC_BODY)
+        this.bases = new GameObject(0, 0, BodyType.STATIC_BODY, 'Bases')
         this.addGameObject(this.bases)
         this.state = new GameHomeState()
         this.state.enter(this)
@@ -73,7 +72,7 @@ class GameScene extends Scene {
     }
 
     initObstacle(): void {
-        this.obstacles = new GameObject(0, 0, BodyType.STATIC_BODY)
+        this.obstacles = new GameObject(0, 0, BodyType.STATIC_BODY, 'Obstacles')
         this.addGameObject(this.obstacles)
         this.triggerAreas = []
         for (let i = 0; i < 3; i++) {
