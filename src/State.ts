@@ -181,7 +181,6 @@ export class GamePlayState implements GameState {
         game.baseSpawner()
         game.obstacleSpawner()
         let collision = false
-        console.log(game.obstacles)
         for (const obstacle of game.obstacles.children) {
             if (
                 game.player.collider.checkCollision(obstacle.children[0].collider) ||

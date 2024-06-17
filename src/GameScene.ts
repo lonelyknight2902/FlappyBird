@@ -33,7 +33,6 @@ class GameScene extends Scene {
         super()
         console.log('GameScene created')
         this.player = Player.getInstance()
-        console.log(this.player)
         this.player.setDirection(new Vector2(0, 1))
         this.player.setPosition(75, 300)
         this.addGameObject(this.player)
