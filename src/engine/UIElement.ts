@@ -5,6 +5,7 @@ class UIElement {
   private _transform: Transform
   private _name: string
   protected _display = true
+  
   constructor(x: number, y: number) {
     this._transform = new Transform(x, y, 0, 1)
   }

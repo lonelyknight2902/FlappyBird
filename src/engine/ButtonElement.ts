@@ -63,7 +63,6 @@ class ButtonElement extends UIElement {
     }
 
     public isHovered(x: number, y: number): boolean {
-        console.log('Position: ', this.getPosition())
         return (
             x >= this.getPosition().x &&
             x <= this.getPosition().x + this._width &&

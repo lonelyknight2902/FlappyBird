@@ -14,7 +14,7 @@ export class GameObject {
     private _name: string
     public width: number
     public height: number
-    public display: boolean = true
+    public display = true
     constructor(width: number, height: number, bodyType: BodyType, name = 'GameObject') {
         this.transform = new Transform(0, 0, 0, 1)
         this.velocity = new Velocity()
