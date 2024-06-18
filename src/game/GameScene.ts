@@ -42,6 +42,7 @@ class GameScene extends Scene {
         this.addGameObject(this.obstacles)
         this.state = new GameHomeState()
         this.state.enter(this)
+        this.initObstacle()
         for (let i = 0; i < 3; i++) {
             const base = new Base(450, 150, BodyType.STATIC_BODY)
             base.setPosition(i * 450, 650)
@@ -93,8 +94,18 @@ class GameScene extends Scene {
             invertedObstacle.setCollider(104, 640, 0, -invertedObstacle.getHeight() - PIPE_GAP)
             this.obstacles.children.push(parent)
             parent.setParent(this.obstacles)
-            parent.setSpeed(BASE_SPEED)
+            parent.setSpeed(0)
             parent.setDirection(new Vector2(-1, 0))
+        }
+    }
+
+    resetObstacle(): void {
+        for (let i = 0; i < this.obstacles.children.length; i++) {
+            const obstacle = this.obstacles.children[i]
+            const randomY = Math.floor(Math.random() * 300) + 200
+            obstacle.setPosition(PIPE_STARTING_OFFSET + PIPE_DISTANCE * i, randomY)
+            obstacle.setSpeed(0)
+            obstacle.children.filter((obj) => obj instanceof TriggerObject)[0].reset()
         }
     }
 
@@ -105,15 +116,11 @@ class GameScene extends Scene {
             0
         ) {
             const obstacle = this.obstacles.children.shift()
-            const trigger = this.triggerAreas.shift()
             const lastObstacle = this.obstacles.children[this.obstacles.children.length - 1]
             const randomY = Math.floor(Math.random() * 250) + 200
             obstacle?.setPosition(lastObstacle.getWorldPosition().x + PIPE_DISTANCE, randomY)
             if (obstacle) {
                 this.obstacles.children.push(obstacle)
-            }
-            if (trigger) {
-                this.triggerAreas.push(trigger)
             }
         }
     }
