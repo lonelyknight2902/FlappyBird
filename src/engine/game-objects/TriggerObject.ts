@@ -1,7 +1,7 @@
-import { BoxCollider } from './Collider'
-import { GameObject } from './GameObject'
-import Transform from './Transform'
-import { BodyType, POINT_AUDIO, TriggerState } from './constants'
+import GameObject from './GameObject'
+import { Transform } from '../components'
+import { BodyType, TriggerState } from '../constants'
+import { POINT_AUDIO } from '../../game/constants'
 
 class TriggerObject extends GameObject {
     private _transform: Transform
@@ -17,7 +17,6 @@ class TriggerObject extends GameObject {
         this._width = width
         this._height = height
         this._objectsInArea = []
-        this.collider = new BoxCollider(width, height, x, y)
         this.setPosition(x, y)
         this._audio = document.createElement('audio')
         this._audio.src = POINT_AUDIO
@@ -60,9 +59,7 @@ class TriggerObject extends GameObject {
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
-        const position = this._transform.getPosition()
-        ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'
-        ctx.fillRect(position.x, position.y, this._width, this._height)
+        return
     }
 }
 

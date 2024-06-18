@@ -1,17 +1,24 @@
-import { BoxCollider, Collider } from './Collider'
-import Transform from './Transform'
-import Vector2 from './Vector2'
-import { BodyType, GRAVITAIONAL_ACCELERATION } from './constants'
-import UpdateInput from '../types/update'
+import { BoxCollider, Collider, Transform, Velocity } from '../components'
+import { Vector2 } from '../utils'
+import { BodyType, GRAVITAIONAL_ACCELERATION, TriggerState } from '../constants'
+import UpdateInput from '../../types/update'
 
-export class GameObject {
+class GameObject {
     protected transform: Transform
     protected velocity: Velocity
     public collider: Collider
     public bodyType: BodyType
-    constructor(width: number, height: number, bodyType: BodyType) {
+    public parent: GameObject | null = null
+    public children: GameObject[] = []
+    private _name: string
+    public width: number
+    public height: number
+    public display = true
+    constructor(width: number, height: number, bodyType: BodyType, name = 'GameObject') {
         this.transform = new Transform(0, 0, 0, 1)
         this.velocity = new Velocity()
+        this.width = width
+        this.height = height
         this.collider = new BoxCollider(
             width,
             height,
@@ -19,6 +26,23 @@ export class GameObject {
             this.transform.getPosition().y
         )
         this.bodyType = bodyType
+        this._name = name
+    }
+
+    public get name(): string {
+        return this._name
+    }
+
+    public set name(name: string) {
+        this._name = name
+    }
+
+    public getWidth(): number {
+        return this.width
+    }
+
+    public getHeight(): number {
+        return this.height
     }
 
     public update(updateInput: UpdateInput): void {
@@ -28,10 +52,17 @@ export class GameObject {
         const speed = this.velocity.getSpeed()
         position.x += (direction.x * speed * updateInput.delta) / 1000
         position.y += (direction.y * speed * updateInput.delta) / 1000
-        colliderPosition.x = position.x
-        colliderPosition.y = position.y
+        const worldPosition = this.getWorldPosition()
+        colliderPosition.x = worldPosition.x
+        colliderPosition.y = worldPosition.y
+        this.children.forEach((child) => {
+            child.update(updateInput)
+        })
     }
 
+    public triggerUpdate(objects: GameObject[]): TriggerState {
+        return TriggerState.OUT
+    }
     public updateGravity(updateInput: UpdateInput): void {
         if (this.bodyType === BodyType.RIGID_BODY) {
             this.velocity.setSpeed(
@@ -71,6 +102,16 @@ export class GameObject {
         return this.transform.getPosition()
     }
 
+    public getWorldPosition(): Vector2 {
+        let position = this.transform.getPosition()
+        let parent = this.parent
+        while (parent) {
+            position = position.add(parent.getPosition())
+            parent = parent.parent
+        }
+        return position
+    }
+
     public setVelocity(speed: number, direction: Vector2): void {
         this.velocity.setSpeed(speed)
         this.velocity.setDirection(direction)
@@ -85,13 +126,15 @@ export class GameObject {
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
-        const position = this.transform.getPosition()
-        ctx.fillRect(position.x, position.y, 150, 100)
-        ctx.fillStyle = 'red'
+        if (!this.display) return
+        this.children.forEach((child) => {
+            child.render(ctx)
+        })
     }
 
     public setCollider(width: number, height: number, x: number, y: number): void {
-        this.collider = new BoxCollider(width, height, x, y)
+        const worldPosition = this.getWorldPosition()
+        this.collider = new BoxCollider(width, height, worldPosition.x + x, worldPosition.y + y)
     }
 
     public setRotation(rotation: number): void {
@@ -101,29 +144,21 @@ export class GameObject {
     public getTransform(): Transform {
         return this.transform
     }
-}
 
-class Velocity {
-    private speed: number
-    private direction: Vector2
-    constructor(speed = 0, direction = Vector2.zero) {
-        this.speed = speed
-        this.direction = direction
+    public setParent(parent: GameObject): void {
+        this.parent = parent
+        const worldPosition = this.getWorldPosition()
+        this.collider.setPosition(worldPosition.x, worldPosition.y)
     }
 
-    public getSpeed(): number {
-        return this.speed
+    public addChild(child: GameObject): void {
+        this.children.push(child)
+        child.setParent(this)
     }
 
-    public getDirection(): Vector2 {
-        return this.direction
-    }
-
-    public setSpeed(speed: number): void {
-        this.speed = speed
-    }
-
-    public setDirection(direction: Vector2): void {
-        this.direction = direction
+    public removeChild(child: GameObject): void {
+        this.children = this.children.filter((c) => c !== child)
     }
 }
+
+export default GameObject

@@ -1,4 +1,4 @@
-import Vector2 from "./Vector2"
+import Vector2 from "../utils/Vector2"
 
 class Transform {
   private position: Vector2

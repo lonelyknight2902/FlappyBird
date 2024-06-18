@@ -1,5 +1,5 @@
-import { BACKGROUND_DAY, BACKGROUND_NIGHT, DAY_NIGHT_CYCLE_TIME } from './engine/constants'
-import UpdateInput from './types/update'
+import { BACKGROUND_DAY, BACKGROUND_NIGHT, DAY_NIGHT_CYCLE_TIME } from './constants'
+import UpdateInput from '../types/update'
 
 class Canvas {
     private _canvas: HTMLCanvasElement
@@ -8,6 +8,7 @@ class Canvas {
     private _start: number
     private _currentAlpha: number
     private _restart: boolean
+    public static canvas: Canvas
     constructor(width: number, height: number) {
         this._canvas = document.createElement('canvas')
         this._canvas.width = width
@@ -108,6 +109,13 @@ class Canvas {
             return
         }
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    }
+
+    public static getInstance(width: number, height: number): Canvas {
+        if (!Canvas.canvas) {
+            Canvas.canvas = new Canvas(width, height)
+        }
+        return Canvas.canvas
     }
 }
 
