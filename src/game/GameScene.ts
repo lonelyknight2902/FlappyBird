@@ -38,6 +38,8 @@ class GameScene extends Scene {
         this.scoreManager = new ScoreManager()
         this.bases = new GameObject(0, 0, BodyType.STATIC_BODY, 'Bases')
         this.addGameObject(this.bases)
+        this.obstacles = new GameObject(0, 0, BodyType.STATIC_BODY, 'Obstacles')
+        this.addGameObject(this.obstacles)
         this.state = new GameHomeState()
         this.state.enter(this)
         for (let i = 0; i < 3; i++) {
@@ -70,8 +72,6 @@ class GameScene extends Scene {
     }
 
     initObstacle(): void {
-        this.obstacles = new GameObject(0, 0, BodyType.STATIC_BODY, 'Obstacles')
-        this.addGameObject(this.obstacles)
         this.triggerAreas = []
         for (let i = 0; i < 3; i++) {
             const parent = new GameObject(0, 0, BodyType.STATIC_BODY)
@@ -104,40 +104,31 @@ class GameScene extends Scene {
                 this.obstacles.children[0].children[0].getWidth() <
             0
         ) {
-            this.obstacles.children.shift()
-            this.triggerAreas.shift()
-            const parent = new GameObject(0, 0, BodyType.STATIC_BODY)
-            const obstacle = new Obstacle(104, 640, PIPE_SOURCE, BodyType.STATIC_BODY)
-            const invertedObstacle = new Obstacle(104, 640, PIPE_FLIP_SOURCE, BodyType.STATIC_BODY)
+            const obstacle = this.obstacles.children.shift()
+            const trigger = this.triggerAreas.shift()
             const lastObstacle = this.obstacles.children[this.obstacles.children.length - 1]
             const randomY = Math.floor(Math.random() * 250) + 200
-            parent.setPosition(lastObstacle.getWorldPosition().x + PIPE_DISTANCE, randomY)
-            obstacle.setPosition(0, 0)
-            invertedObstacle.setPosition(0, -invertedObstacle.getHeight() - PIPE_GAP)
-            const trigger = new TriggerObject(104, PIPE_GAP, 0, -PIPE_GAP)
-            parent.addChild(obstacle)
-            parent.addChild(invertedObstacle)
-            parent.addChild(trigger)
-            obstacle.setParent(parent)
-            invertedObstacle.setParent(parent)
-            trigger.setParent(parent)
-            parent.setSpeed(BASE_SPEED)
-            parent.setDirection(new Vector2(-1, 0))
-            this.obstacles.children.push(parent)
-            this.triggerAreas.push(trigger)
+            obstacle?.setPosition(lastObstacle.getWorldPosition().x + PIPE_DISTANCE, randomY)
+            if (obstacle) {
+                this.obstacles.children.push(obstacle)
+            }
+            if (trigger) {
+                this.triggerAreas.push(trigger)
+            }
         }
     }
 
     baseSpawner(): void {
         if (this.bases.children[0].getPosition().x + this.bases.children[0].getWidth() < 0) {
-            this.bases.children.shift()
-            const base = new Base(450, 150, BodyType.STATIC_BODY)
+            const base = this.bases.children.shift()
             const lastBase = this.bases.children[this.bases.children.length - 1]
-            base.setPosition(lastBase.getPosition().x + lastBase.getWidth(), 650)
-            base.setSpeed(BASE_SPEED)
-            base.setDirection(new Vector2(-1, 0))
-            this.bases.children.push(base)
-            base.setParent(this.bases)
+            base?.setPosition(lastBase.getPosition().x + lastBase.getWidth(), 650)
+            base?.setSpeed(BASE_SPEED)
+            base?.setDirection(new Vector2(-1, 0))
+            if (base) {
+                this.bases.children.push(base)
+            }
+            base?.setParent(this.bases)
         }
     }
 }
