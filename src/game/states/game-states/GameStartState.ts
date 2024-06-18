@@ -1,12 +1,12 @@
-import { FADE_OUT_TIME } from "../../constants"
-import { InputHandler } from "../../../engine/inputs"
-import { TextElement } from "../../../engine/user-interface"
-import { GameState } from "../../../types/state"
-import UpdateInput from "../../../types/update"
-import Canvas from "../../Canvas"
-import GameScene from "../../GameScene"
-import { GamePlayState } from "../game-states"
-import { PlayerAliveState } from "../player-states"
+import { FADE_OUT_TIME } from '../../constants'
+import { InputHandler } from '../../../engine/inputs'
+import { TextElement } from '../../../engine/user-interface'
+import { GameState } from '../../../types/state'
+import UpdateInput from '../../../types/update'
+import Canvas from '../../Canvas'
+import GameScene from '../../GameScene'
+import { GamePlayState } from '../game-states'
+import { PlayerAliveState } from '../player-states'
 
 class GameStartState implements GameState {
     private _start: number
@@ -54,6 +54,7 @@ class GameStartState implements GameState {
         this._overlayAlpha = 1
         game.player.setRotation(0)
         game.player.setRotationSpeed(0)
+        game.player.animation.play(true)
         game.canvas.reset()
         game.player.state = new PlayerAliveState()
         this._getReadyTitle = new TextElement(

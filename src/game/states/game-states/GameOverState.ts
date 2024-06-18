@@ -74,7 +74,10 @@ class GameOverState implements GameState {
         console.log('Game over')
         this._start = Date.now()
         this._end = this._start + FLASH_IN_OUT_TIME
+        console.log(game.player.state)
         game.player.state = new PlayerDeadState()
+        console.log(game.player.state)
+        game.player.state.enter(game.player)
         this._gameOverTitle = new TextElement(
             game.canvas.canvas.width / 2,
             200,
