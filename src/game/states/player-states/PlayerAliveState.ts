@@ -1,4 +1,3 @@
-import { FLAP_RATE } from "../../constants"
 import { PlayerState } from "../../../types/state"
 import Player from "../../Player"
 
