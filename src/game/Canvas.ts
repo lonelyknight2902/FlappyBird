@@ -1,5 +1,5 @@
-import { BACKGROUND_DAY, BACKGROUND_NIGHT, DAY_NIGHT_CYCLE_TIME } from './engine/constants'
-import UpdateInput from './types/update'
+import { BACKGROUND_DAY, BACKGROUND_NIGHT, DAY_NIGHT_CYCLE_TIME } from './constants'
+import UpdateInput from '../types/update'
 
 class Canvas {
     private _canvas: HTMLCanvasElement

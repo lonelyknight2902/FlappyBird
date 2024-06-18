@@ -1,8 +1,9 @@
-import { GameObject } from './engine/GameObject'
-import { PlayerAliveState } from './State'
-import { BodyType, FLAP_AUDIO, FLAP_FORCE } from './engine/constants'
-import { PlayerState } from './types/state'
-import UpdateInput from './types/update'
+import { GameObject } from '../engine/game-objects'
+import { PlayerAliveState } from './states/player-states'
+import { BodyType } from '../engine/constants'
+import { FLAP_AUDIO, FLAP_FORCE } from './constants'
+import { PlayerState } from '../types/state'
+import UpdateInput from '../types/update'
 
 class Player extends GameObject {
     private _sprite: HTMLImageElement[]

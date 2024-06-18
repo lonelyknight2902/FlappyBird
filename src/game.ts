@@ -1,9 +1,10 @@
 import UpdateInput from './types/update'
-import Canvas from './Canvas'
-import InputHandler from './engine/InputHandler'
-import Scene from './engine/Scene'
-import GameScene from './GameScene'
-import TextElement from './engine/TextElement'
+import Canvas from './game/Canvas'
+import { InputHandler } from './engine/inputs'
+import { Scene } from './engine/scenes'
+import GameScene from './game/GameScene'
+import { TextElement } from './engine/user-interface'
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from './game/constants'
 
 export class Game {
     private lastTime: number
@@ -17,7 +18,7 @@ export class Game {
     public fpsCounter: TextElement
     constructor() {
         console.log('Game created')
-        this.canvas = Canvas.getInstance(450, 800)
+        this.canvas = Canvas.getInstance(CANVAS_WIDTH, CANVAS_HEIGHT)
         this._currentScene = new GameScene(this.canvas)
         this._scenes = [this._currentScene]
         this.lastTime = window.performance.now()

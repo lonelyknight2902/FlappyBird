@@ -1,4 +1,4 @@
-import InputHandler from './InputHandler'
+import { InputHandler } from '../inputs'
 import TextElement from './TextElement'
 import UIElement from './UIElement'
 

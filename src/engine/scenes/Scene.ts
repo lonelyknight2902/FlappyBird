@@ -1,5 +1,5 @@
-import UpdateInput from '../types/update'
-import { GameObject } from './GameObject'
+import UpdateInput from '../../types/update'
+import { GameObject } from '../game-objects'
 
 class Scene {
     private _gameObjects: GameObject[] = []

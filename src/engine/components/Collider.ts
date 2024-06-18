@@ -1,5 +1,5 @@
 import Transform from './Transform'
-import Vector2 from './Vector2'
+import { Vector2 } from '../utils'
 
 export abstract class Collider {
     transform: Transform

@@ -1,10 +1,9 @@
-import { BoxCollider, Collider } from './Collider'
-import Transform from './Transform'
-import Vector2 from './Vector2'
-import { BodyType, GRAVITAIONAL_ACCELERATION, TriggerState } from './constants'
-import UpdateInput from '../types/update'
+import { BoxCollider, Collider, Transform, Velocity } from '../components'
+import { Vector2 } from '../utils'
+import { BodyType, GRAVITAIONAL_ACCELERATION, TriggerState } from '../constants'
+import UpdateInput from '../../types/update'
 
-export class GameObject {
+class GameObject {
     protected transform: Transform
     protected velocity: Velocity
     public collider: Collider
@@ -162,27 +161,4 @@ export class GameObject {
     }
 }
 
-class Velocity {
-    private speed: number
-    private direction: Vector2
-    constructor(speed = 0, direction = Vector2.zero) {
-        this.speed = speed
-        this.direction = direction
-    }
-
-    public getSpeed(): number {
-        return this.speed
-    }
-
-    public getDirection(): Vector2 {
-        return this.direction
-    }
-
-    public setSpeed(speed: number): void {
-        this.speed = speed
-    }
-
-    public setDirection(direction: Vector2): void {
-        this.direction = direction
-    }
-}
+export default GameObject

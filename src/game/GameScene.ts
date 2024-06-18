@@ -3,22 +3,21 @@ import Canvas from './Canvas'
 import Obstacle from './Obstacle'
 import Player from './Player'
 import ScoreManager from './ScoreManager'
-import { GameHomeState } from './State'
-import { GameObject } from './engine/GameObject'
-import Scene from './engine/Scene'
-import TriggerObject from './engine/TriggerObject'
-import Vector2 from './engine/Vector2'
+import { GameHomeState } from './states/game-states'
+import { GameObject, TriggerObject } from '../engine/game-objects'
+import { Scene } from '../engine/scenes'
+import { Vector2 } from '../engine/utils'
 import {
     PIPE_SOURCE,
-    BodyType,
     PIPE_STARTING_OFFSET,
     PIPE_DISTANCE,
     PIPE_FLIP_SOURCE,
     PIPE_GAP,
     BASE_SPEED,
-} from './engine/constants'
-import { GameState } from './types/state'
-import UpdateInput from './types/update'
+} from './constants'
+import { GameState } from '../types/state'
+import UpdateInput from '../types/update'
+import { BodyType } from '../engine/constants'
 
 class GameScene extends Scene {
     public player: Player
@@ -100,7 +99,11 @@ class GameScene extends Scene {
     }
 
     obstacleSpawner(): void {
-        if (this.obstacles.children[0].getPosition().x + this.obstacles.children[0].children[0].getWidth() < 0) {
+        if (
+            this.obstacles.children[0].getPosition().x +
+                this.obstacles.children[0].children[0].getWidth() <
+            0
+        ) {
             this.obstacles.children.shift()
             this.triggerAreas.shift()
             const parent = new GameObject(0, 0, BodyType.STATIC_BODY)

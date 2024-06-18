@@ -1,6 +1,7 @@
-import { GameObject } from './GameObject'
-import Transform from './Transform'
-import { BodyType, POINT_AUDIO, TriggerState } from './constants'
+import GameObject from './GameObject'
+import { Transform } from '../components'
+import { BodyType, TriggerState } from '../constants'
+import { POINT_AUDIO } from '../../game/constants'
 
 class TriggerObject extends GameObject {
     private _transform: Transform
