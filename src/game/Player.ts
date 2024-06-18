@@ -1,9 +1,10 @@
 import { GameObject } from '../engine/game-objects'
 import { PlayerAliveState } from './states/player-states'
 import { BodyType } from '../engine/constants'
-import { FLAP_AUDIO, FLAP_FORCE } from './constants'
+import { FLAP_AUDIO, FLAP_FORCE, FLAP_RATE } from './constants'
 import { PlayerState } from '../types/state'
 import UpdateInput from '../types/update'
+import { Animation } from '../engine/animations'
 
 class Player extends GameObject {
     private _sprite: HTMLImageElement[]
@@ -17,6 +18,7 @@ class Player extends GameObject {
     private _flapped = false
     private _start: number
     private _state: PlayerState
+    public animation: Animation
     public static player: Player
 
     constructor() {
@@ -33,6 +35,13 @@ class Player extends GameObject {
             sprite.src = source
             this._sprite.push(sprite)
         })
+
+        this.animation = new Animation()
+        this.animation.addFrame(this._sprite[0])
+        this.animation.addFrame(this._sprite[1])
+        this.animation.addFrame(this._sprite[0])
+        this.animation.addFrame(this._sprite[2])
+        this.animation.frameDuration = FLAP_RATE
         this._spriteCycle = [0, 1, 0, 2]
         this._frameCount = 0
         this._currentFrame = 0
@@ -42,7 +51,7 @@ class Player extends GameObject {
         this._rotationAcceleration = 0
         this._start = Date.now()
         this._state = new PlayerAliveState()
-        Player.player = this
+        this._state.enter(this)
     }
 
     public static getInstance(): Player {
@@ -55,6 +64,7 @@ class Player extends GameObject {
 
     update(updateInput: UpdateInput): void {
         super.update(updateInput)
+        this.animation.update(updateInput)
         let rotation =
             this.transform.getRotation() + (this._rotationSpeed * updateInput.delta) / 1000
         if (rotation < -30) {
@@ -129,6 +139,10 @@ class Player extends GameObject {
 
     public set state(value: PlayerState) {
         this._state = value
+    }
+
+    public get state(): PlayerState {
+        return this._state
     }
 }
 

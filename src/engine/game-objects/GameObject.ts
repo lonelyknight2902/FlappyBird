@@ -63,6 +63,10 @@ class GameObject {
     public triggerUpdate(objects: GameObject[]): TriggerState {
         return TriggerState.OUT
     }
+
+    public reset(): void {
+        return
+    }
     public updateGravity(updateInput: UpdateInput): void {
         if (this.bodyType === BodyType.RIGID_BODY) {
             this.velocity.setSpeed(

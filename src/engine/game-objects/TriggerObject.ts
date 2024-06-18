@@ -58,6 +58,10 @@ class TriggerObject extends GameObject {
         console.log('TriggerObject onTriggerStay')
     }
 
+    public reset() {
+        this._objectsInArea = []
+    }
+
     public render(ctx: CanvasRenderingContext2D): void {
         return
     }

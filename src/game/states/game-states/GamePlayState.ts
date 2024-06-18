@@ -1,4 +1,4 @@
-import { ROTATION_ACCERATION } from '../../constants'
+import { BASE_SPEED, ROTATION_ACCERATION } from '../../constants'
 import { TriggerState } from '../../../engine/constants'
 import { TriggerObject } from '../../../engine/game-objects'
 import { InputHandler } from '../../../engine/inputs'
@@ -97,7 +97,6 @@ class GamePlayState implements GameState {
     enter(game: GameScene): void {
         game.player.flap()
         game.player.setRotationAcceleration(ROTATION_ACCERATION)
-        game.initObstacle()
         this._scoreText = new TextElement(
             game.canvas.canvas.width / 2,
             200,
@@ -107,6 +106,9 @@ class GamePlayState implements GameState {
             'bold',
             true
         )
+        game.obstacles.children.forEach((obstacle) => {
+            obstacle.setSpeed(BASE_SPEED)
+        })
     }
     exit(game: GameScene): void {
         return

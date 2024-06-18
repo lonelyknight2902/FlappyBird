@@ -13,4 +13,6 @@ export interface GameState {
 
 export interface PlayerState {
   render(player: Player, ctx: CanvasRenderingContext2D): void;
+  enter(player: Player): void;
+  exit(player: Player): void;
 }

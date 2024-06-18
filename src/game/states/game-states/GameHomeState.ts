@@ -65,6 +65,7 @@ class GameHomeState implements GameState {
         const canvas = Canvas.getInstance(450, 800)
         canvas.reset()
         game.player.state = new PlayerAliveState()
+        game.resetObstacle()
         this._startButton = new ButtonElement(
             canvas.canvas.width / 2 - 85,
             500,
