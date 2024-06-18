@@ -53,12 +53,14 @@ class GameHomeState implements GameState {
     }
 
     enter(game: GameScene): void {
+        console.log('GameHomeState')
         this._start = Date.now()
         this._end = this._start + FADE_OUT_TIME
         this._overlayAlpha = 1
         game.player.setRotation(0)
         game.player.setRotationSpeed(0)
         game.player.setRotationAcceleration(0)
+        game.player.animation.play(true)
         game.bases.children.forEach((base) => {
             base.setSpeed(BASE_SPEED)
         })

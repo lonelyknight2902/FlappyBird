@@ -54,7 +54,6 @@ class GameStartState implements GameState {
         this._overlayAlpha = 1
         game.player.setRotation(0)
         game.player.setRotationSpeed(0)
-        game.player.animation.play(true)
         game.canvas.reset()
         game.player.state = new PlayerAliveState()
         this._getReadyTitle = new TextElement(
