@@ -55,19 +55,18 @@ class TextElement extends UIElement {
         }
         ctx.font = `${this._weight} ${this._size}px ${this._family}`
         ctx.fillStyle = this.color ? this.color : 'white'
+        ctx.lineWidth = 1
         if (this._isCentered) {
             ctx.save()
             ctx.textBaseline = 'middle'
             ctx.textAlign = 'center'
             ctx.fillText(this._text, position.x, position.y)
-            ctx.lineWidth = 2
-            if (this.textStroke) ctx.strokeText(this._text, position.x, position.y, this.width)
+            if (this.textStroke) ctx.strokeText(this._text, position.x, position.y)
             ctx.restore()
         } else {
             ctx.textAlign = this._textAlign
             ctx.fillText(this._text, position.x, position.y)
-            ctx.lineWidth = 2
-            if (this.textStroke) ctx.strokeText(this._text, position.x, position.y, this.width)
+            if (this.textStroke) ctx.strokeText(this._text, position.x, position.y)
         }
     }
 }
