@@ -20,6 +20,10 @@ class Canvas {
             return
         }
         game.appendChild(this.canvas)
+        const font = new FontFace('Flappy Bird', 'url(assets/fonts/Flappy.TTF)')
+        font.load().then((loadedFont) => {
+            document.fonts.add(loadedFont)
+        })
         const backgroundDay = document.createElement('img')
         backgroundDay.src = BACKGROUND_DAY
         const backgroundNight = document.createElement('img')
