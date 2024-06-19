@@ -10,6 +10,7 @@ class TextElement extends UIElement {
     private _isCentered = false
     private _textAlign: CanvasTextAlign = 'left'
     public textAnimation: TextAnimation | null = null
+    public textStroke = false
     constructor(
         x: number,
         y: number,
@@ -42,7 +43,6 @@ class TextElement extends UIElement {
         if (this.textAnimation) {
             this.textAnimation.update(updateInput)
             this._text = this.textAnimation.current.toString()
-            console.log(this.textAnimation.current.toString())
         }
     }
 
@@ -60,10 +60,14 @@ class TextElement extends UIElement {
             ctx.textBaseline = 'middle'
             ctx.textAlign = 'center'
             ctx.fillText(this._text, position.x, position.y)
+            ctx.lineWidth = 2
+            if (this.textStroke) ctx.strokeText(this._text, position.x, position.y, this.width)
             ctx.restore()
         } else {
             ctx.textAlign = this._textAlign
             ctx.fillText(this._text, position.x, position.y)
+            ctx.lineWidth = 2
+            if (this.textStroke) ctx.strokeText(this._text, position.x, position.y, this.width)
         }
     }
 }

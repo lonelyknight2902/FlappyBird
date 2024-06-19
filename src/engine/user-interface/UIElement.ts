@@ -13,6 +13,8 @@ class UIElement {
     private _children: UIElement[] = []
     private _backgroundColor: string
     private _color = 'white'
+    private _borderColor: string
+    private _borderWidth: number
     protected _width: number
     protected _height: number
 
@@ -20,6 +22,8 @@ class UIElement {
         this._transform = new Transform(x, y, 0, 1)
         this._width = width
         this._height = height
+        this._borderColor = 'black'
+        this._borderWidth = 1
     }
 
     public set name(name: string) {
@@ -114,6 +118,11 @@ class UIElement {
         const position = this.getWorldPosition()
         ctx.fillStyle = this._backgroundColor ? this._backgroundColor : 'red'
         ctx.fillRect(position.x, position.y, this._width, this._height)
+        if (this._borderWidth > 0) {
+            ctx.strokeStyle = this._borderColor
+            ctx.lineWidth = this._borderWidth
+            ctx.strokeRect(position.x, position.y, this._width, this._height)
+        }
     }
 }
 
