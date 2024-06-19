@@ -1,6 +1,6 @@
-import { FLASH_IN_OUT_TIME } from '../../constants'
+import { CANVAS_HEIGHT, FLASH_IN_OUT_TIME } from '../../constants'
 import { InputHandler } from '../../../engine/inputs'
-import { TextElement, UIElement } from '../../../engine/user-interface'
+import { ImageElement, TextElement, UIElement } from '../../../engine/user-interface'
 import { GameState } from '../../../types/state'
 import UpdateInput from '../../../types/update'
 import GameScene from '../../GameScene'
@@ -13,7 +13,7 @@ class GameOverState implements GameState {
     private _start: number
     private _end: number
     private _resultDashboard: UIElement
-    private _gameOverTitle: TextElement
+    private _gameOverTitle: ImageElement
     private _finalScoreTitleText: TextElement
     private _highScoreTitleText: TextElement
     private _finalScoreText: TextElement
@@ -22,7 +22,7 @@ class GameOverState implements GameState {
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
         if (
             (inputHandler.isKeyDown('Space') || inputHandler.isTouchStart()) &&
-            Date.now() - this._start > 1000
+            Date.now() - this._start > 3000
         ) {
             game.player.setPosition(75, 300)
             game.initObstacle()
@@ -88,77 +88,86 @@ class GameOverState implements GameState {
         game.player.state = new PlayerDeadState()
         console.log(game.player.state)
         game.player.state.enter(game.player)
-        this._gameOverTitle = new TextElement(
-            game.canvas.canvas.width / 2,
-            200,
-            100,
-            100,
-            'Game Over',
-            'Courier New',
-            50,
-            'bold',
-            true
+        // this._gameOverTitle = new TextElement(
+        //     game.canvas.canvas.width / 2,
+        //     200,
+        //     100,
+        //     100,
+        //     'Game Over',
+        //     'Courier New',
+        //     50,
+        //     'bold',
+        //     true
+        // )
+        this._gameOverTitle = new ImageElement(
+            game.canvas.canvas.width / 2 - (192 * 3) / 4,
+            -200,
+            192 * 1.5,
+            42 * 1.5,
+            'assets/images/gameover.png'
         )
         this._gameOverTitle.animation = new TransformAnimation(
-            new Transform(game.canvas.canvas.width / 2, 0, 0, 1),
-            new Transform(game.canvas.canvas.width / 2, 200, 0, 1),
+            new Transform(game.canvas.canvas.width / 2 - (192 * 3) / 4, -200, 0, 1),
+            new Transform(game.canvas.canvas.width / 2 - (192 * 3) / 4, 200, 0, 1),
             this._gameOverTitle,
-            200,
+            300,
             (t: number) => Math.sin((t * Math.PI) / 2)
         )
-        this._gameOverTitle.animation.play()
-        this._resultDashboard = new UIElement(game.canvas.canvas.width / 2 - 200, 800, 400, 200)
+        this._gameOverTitle.animation.play(FLASH_IN_OUT_TIME * 2)
+        this._resultDashboard = new UIElement(game.canvas.canvas.width / 2 - 60, 800, 120, 200)
         this._resultDashboard.backgroundColor = 'rgb(219, 218, 150)'
         this._finalScoreTitleText = new TextElement(
-            this._resultDashboard.width - 20,
+            this._resultDashboard.width / 2,
             50,
             100,
             100,
             'SCORE',
-            'Courier New',
-            30,
-            'bold',
-            false
+            'Flappy Bird',
+            25,
+            '',
+            true
         )
-        this._finalScoreTitleText.textAlign = 'right'
-        this._finalScoreTitleText.color = 'rgb(210,170,79)'
+        // this._finalScoreTitleText.textAlign = 'right'
+        this._finalScoreTitleText.color = '#E06119'
         this._finalScoreText = new TextElement(
-            this._resultDashboard.width - 20,
-            80,
+            this._resultDashboard.width / 2,
+            85,
             100,
             100,
             '0',
-            'Courier New',
-            30,
+            'Flappy Bird',
+            40,
             'bold',
-            false
+            true
         )
-        this._finalScoreText.textAlign = 'right'
+        // this._finalScoreText.textAlign = 'right'
         this._highScoreTitleText = new TextElement(
-            this._resultDashboard.width - 20,
-            this._resultDashboard.height - 80,
+            this._resultDashboard.width / 2,
+            this._resultDashboard.height - 75,
             100,
             100,
             'BEST',
-            'Courier New',
-            30,
-            'bold',
-            false
+            'Flappy Bird',
+            25,
+            '',
+            true
         )
         this._highScoreText = new TextElement(
-            this._resultDashboard.width - 20,
-            this._resultDashboard.height - 50,
+            this._resultDashboard.width / 2,
+            this._resultDashboard.height - 40,
             100,
             100,
             game.scoreManager.highScore.toString(),
-            'Courier New',
-            30,
+            'Flappy Bird',
+            40,
             'bold',
-            false
+            true
         )
-        this._highScoreText.textAlign = 'right'
-        this._highScoreTitleText.textAlign = 'right'
-        this._highScoreTitleText.color = 'rgb(210,170,79)'
+        // this._highScoreText.textAlign = 'right'
+        // this._highScoreTitleText.textAlign = 'right'
+        this._finalScoreText.textStroke = true
+        this._highScoreText.textStroke = true
+        this._highScoreTitleText.color = '#E06119'
         this._finalScoreTitleText.parent = this._resultDashboard
         this._highScoreTitleText.parent = this._resultDashboard
         this._finalScoreText.parent = this._resultDashboard
@@ -168,15 +177,20 @@ class GameOverState implements GameState {
         this._resultDashboard.addChild(this._finalScoreText)
         this._resultDashboard.addChild(this._highScoreText)
         this._resultDashboard.animation = new TransformAnimation(
-            new Transform(game.canvas.canvas.width / 2 - 200, 800, 0, 1),
-            new Transform(game.canvas.canvas.width / 2 - 200, 300, 0, 1),
+            new Transform(game.canvas.canvas.width / 2 - 60, CANVAS_HEIGHT, 0, 1),
+            new Transform(game.canvas.canvas.width / 2 - 60, 300, 0, 1),
             this._resultDashboard,
-            500,
+            250,
             (t: number) => Math.sin((t * Math.PI) / 2)
         )
-        this._finalScoreText.textAnimation = new TextAnimation(0, game.scoreManager.score, 500, 1000)
-        this._resultDashboard.animation.play()
-        this._finalScoreText.textAnimation.play()
+        this._finalScoreText.textAnimation = new TextAnimation(
+            0,
+            game.scoreManager.score,
+            500,
+            1000
+        )
+        this._resultDashboard.animation.play(FLASH_IN_OUT_TIME + 1000)
+        this._finalScoreText.textAnimation.play(FLASH_IN_OUT_TIME + 1400)
         game.bases.children.forEach((base) => {
             base.setSpeed(0)
         })
