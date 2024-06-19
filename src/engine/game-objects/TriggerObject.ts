@@ -18,8 +18,12 @@ class TriggerObject extends GameObject {
         this._height = height
         this._objectsInArea = []
         this.setPosition(x, y)
-        this._audio = document.createElement('audio')
-        this._audio.src = POINT_AUDIO
+        // this._audio = document.createElement('audio')
+        // this._audio.src = POINT_AUDIO
+    }
+
+    public set audio(audio: HTMLAudioElement) {
+        this._audio = audio
     }
 
     public triggerUpdate(objects: GameObject[]): TriggerState {
@@ -52,7 +56,7 @@ class TriggerObject extends GameObject {
     public onTriggerExit(object: GameObject) {
         console.log('TriggerObject onTriggerExit')
         this._objectsInArea = this._objectsInArea.filter((obj) => obj !== object)
-        this._audio.play()
+        this._audio?.play()
     }
     public onTriggerStay() {
         console.log('TriggerObject onTriggerStay')
