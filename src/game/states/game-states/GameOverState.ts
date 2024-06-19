@@ -137,7 +137,7 @@ class GameOverState implements GameState {
             '0',
             'Flappy Bird',
             40,
-            'bold',
+            '',
             true
         )
         // this._finalScoreText.textAlign = 'right'
@@ -160,7 +160,7 @@ class GameOverState implements GameState {
             game.scoreManager.highScore.toString(),
             'Flappy Bird',
             40,
-            'bold',
+            '',
             true
         )
         // this._highScoreText.textAlign = 'right'

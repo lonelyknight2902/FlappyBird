@@ -74,9 +74,9 @@ class GameHomeState implements GameState {
             170,
             50,
             'START',
-            'Courier New',
+            'Flappy Bird',
             20,
-            'bold',
+            '',
             true
         )
         const onClick = () => {
@@ -92,10 +92,11 @@ class GameHomeState implements GameState {
             100,
             'Flappy Bird',
             'Flappy Bird',
-            75,
+            50,
             '',
             true
         )
+        this._gameTitle.textStroke = true
     }
     exit(game: GameScene): void {
         return

@@ -105,9 +105,10 @@ class GamePlayState implements GameState {
             game.scoreManager.score.toString(),
             'Flappy Bird',
             40,
-            '900',
+            '',
             true
         )
+        this._scoreText.textStroke = true
         game.obstacles.children.forEach((obstacle) => {
             obstacle.setSpeed(BASE_SPEED)
         })
