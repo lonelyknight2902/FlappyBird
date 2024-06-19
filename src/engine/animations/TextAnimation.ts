@@ -20,9 +20,10 @@ class TextAnimation {
         return this._isPlaying
     }
 
-    play() {
+    play(delay = 0) {
         this._isPlaying = true
         this._time = 0
+        this._delay = delay
     }
 
     stop() {
@@ -39,7 +40,6 @@ class TextAnimation {
                 return
             }
             const t = (this._time - this._delay) / this._duration
-            console.log('Time: ', t)
             this._current = Math.round(this._start + (this._target - this._start) * t)
         }
     }
