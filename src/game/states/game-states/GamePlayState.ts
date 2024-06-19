@@ -103,9 +103,9 @@ class GamePlayState implements GameState {
             100,
             100,
             game.scoreManager.score.toString(),
-            'Courier New',
+            'Flappy Bird',
             40,
-            'bold',
+            '900',
             true
         )
         game.obstacles.children.forEach((obstacle) => {
