@@ -100,6 +100,8 @@ class GamePlayState implements GameState {
         this._scoreText = new TextElement(
             game.canvas.canvas.width / 2,
             200,
+            100,
+            100,
             game.scoreManager.score.toString(),
             'Courier New',
             40,

@@ -30,7 +30,7 @@ class GameHomeState implements GameState {
         })
         game.baseSpawner()
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
-        this._startButton.update(inputHandler)
+        this._startButton.updateButton(inputHandler, updateInput)
     }
 
     render(game: GameScene): void {
@@ -88,6 +88,8 @@ class GameHomeState implements GameState {
         this._gameTitle = new TextElement(
             canvas.canvas.width / 2,
             200,
+            100,
+            100,
             'Flappy Bird',
             'Courier New',
             50,

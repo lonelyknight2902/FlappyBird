@@ -59,6 +59,8 @@ class GameStartState implements GameState {
         this._getReadyTitle = new TextElement(
             game.canvas.canvas.width / 2,
             200,
+            100,
+            100,
             'Get Ready',
             'Courier New',
             50,
