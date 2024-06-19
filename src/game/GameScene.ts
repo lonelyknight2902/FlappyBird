@@ -3,7 +3,7 @@ import Canvas from './Canvas'
 import Obstacle from './Obstacle'
 import Player from './Player'
 import ScoreManager from './ScoreManager'
-import { GameHomeState } from './states/game-states'
+import { GameHomeState, GameLoadState } from './states/game-states'
 import { GameObject, TriggerObject } from '../engine/game-objects'
 import { Scene } from '../engine/scenes'
 import { Vector2 } from '../engine/utils'
@@ -40,7 +40,7 @@ class GameScene extends Scene {
         this.addGameObject(this.bases)
         this.obstacles = new GameObject(0, 0, BodyType.STATIC_BODY, 'Obstacles')
         this.addGameObject(this.obstacles)
-        this.state = new GameHomeState()
+        this.state = new GameLoadState()
         this.state.enter(this)
         this.initObstacle()
         for (let i = 0; i < 3; i++) {
