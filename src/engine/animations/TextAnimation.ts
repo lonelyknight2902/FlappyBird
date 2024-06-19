@@ -37,6 +37,7 @@ class TextAnimation {
             if (this._time >= this._duration + this._delay) {
                 this._time = this._duration
                 this._isPlaying = false
+                this._current = this._target
                 return
             }
             const t = (this._time - this._delay) / this._duration
