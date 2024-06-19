@@ -50,8 +50,13 @@ class ButtonElement extends UIElement {
     public render(ctx: CanvasRenderingContext2D): void {
         if (!this.display) return
         const position = this.getWorldPosition()
-        ctx.fillStyle = '#E06119'
+        ctx.fillStyle = '#FFF'
         ctx.fillRect(position.x, position.y, this._width, this._height)
+        ctx.strokeStyle = '#000'
+        ctx.lineWidth = 1
+        ctx.strokeRect(position.x, position.y, this._width, this._height)
+        ctx.fillStyle = '#E06119'
+        ctx.fillRect(position.x + 5, position.y + 5, this._width - 10, this._height - 10)
         this._text.render(ctx)
     }
 
