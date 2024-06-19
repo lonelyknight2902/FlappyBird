@@ -73,7 +73,7 @@ class GameHomeState implements GameState {
             500,
             170,
             50,
-            'Start',
+            'START',
             'Courier New',
             20,
             'bold',
@@ -91,9 +91,9 @@ class GameHomeState implements GameState {
             100,
             100,
             'Flappy Bird',
-            'Courier New',
-            50,
-            'bold',
+            'Flappy Bird',
+            75,
+            '',
             true
         )
     }
