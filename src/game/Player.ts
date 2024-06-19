@@ -45,8 +45,8 @@ class Player extends GameObject {
         this._spriteCycle = [0, 1, 0, 2]
         this._frameCount = 0
         this._currentFrame = 0
-        this._flapAudio = document.createElement('audio')
-        this._flapAudio.src = FLAP_AUDIO
+        // this._flapAudio = document.createElement('audio')
+        // this._flapAudio.src = FLAP_AUDIO
         this._rotationSpeed = 0
         this._rotationAcceleration = 0
         this._start = Date.now()
@@ -60,6 +60,10 @@ class Player extends GameObject {
             console.log('Player created')
         }
         return Player.player
+    }
+
+    public set flapAudio(value: HTMLAudioElement) {
+        this._flapAudio = value
     }
 
     update(updateInput: UpdateInput): void {

@@ -14,6 +14,7 @@ import {
     PIPE_FLIP_SOURCE,
     PIPE_GAP,
     BASE_SPEED,
+    POINT_AUDIO,
 } from './constants'
 import { GameState } from '../types/state'
 import UpdateInput from '../types/update'
@@ -27,6 +28,8 @@ class GameScene extends Scene {
     public bases: GameObject
     public state: GameState
     public hitAudio: HTMLAudioElement
+    public pointAudio: HTMLAudioElement
+    public flapAudio: HTMLAudioElement
     public canvas: Canvas
     constructor(canvas: Canvas) {
         super()
@@ -51,8 +54,6 @@ class GameScene extends Scene {
             base.setDirection(new Vector2(-1, 0))
             base.setParent(this.bases)
         }
-        this.hitAudio = document.createElement('audio')
-        this.hitAudio.src = 'assets/audio/hit.wav'
         this.canvas = canvas
     }
 
@@ -83,6 +84,8 @@ class GameScene extends Scene {
             obstacle.setPosition(0, 0)
             invertedObstacle.setPosition(0, -invertedObstacle.getHeight() - PIPE_GAP)
             const trigger = new TriggerObject(104, PIPE_GAP, 0, -PIPE_GAP)
+            trigger.audio = this.pointAudio
+            console.log(this.pointAudio)
             parent.addChild(obstacle)
             parent.addChild(invertedObstacle)
             parent.addChild(trigger)
