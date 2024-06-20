@@ -1,12 +1,12 @@
-import { BASE_SPEED, FADE_OUT_TIME } from "../../constants"
-import { InputHandler } from "../../../engine/inputs"
-import { ButtonElement, TextElement } from "../../../engine/user-interface"
-import { GameState } from "../../../types/state"
-import UpdateInput from "../../../types/update"
-import Canvas from "../../Canvas"
-import GameScene from "../../GameScene"
-import { PlayerAliveState } from "../player-states"
-import GameStartState from "./GameStartState"
+import { BASE_SPEED, FADE_OUT_TIME } from '../../constants'
+import { InputHandler } from '../../../engine/inputs'
+import { ButtonElement, TextElement } from '../../../engine/user-interface'
+import { GameState } from '../../../types/state'
+import UpdateInput from '../../../types/update'
+import Canvas from '../../Canvas'
+import GameScene from '../../GameScene'
+import { PlayerAliveState } from '../player-states'
+import GameStartState from './GameStartState'
 
 class GameHomeState implements GameState {
     private _start: number
@@ -61,6 +61,8 @@ class GameHomeState implements GameState {
         game.player.setRotationSpeed(0)
         game.player.setRotationAcceleration(0)
         game.player.animation.play(true)
+        game.player.setPosition(75, 300)
+        game.scoreManager.resetScore()
         game.bases.children.forEach((base) => {
             base.setSpeed(BASE_SPEED)
         })
