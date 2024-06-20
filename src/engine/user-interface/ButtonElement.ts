@@ -1,11 +1,10 @@
+import UpdateInput from '../../types/update'
 import { InputHandler } from '../inputs'
 import TextElement from './TextElement'
 import UIElement from './UIElement'
 
 class ButtonElement extends UIElement {
     private _text: TextElement
-    private _width: number
-    private _height: number
     private _onClick: () => void
     constructor(
         x: number,
@@ -18,25 +17,26 @@ class ButtonElement extends UIElement {
         weight: string,
         isCenteredText = false
     ) {
-        super(x, y)
+        super(x, y, width, height)
         this._text = new TextElement(
             x + width / 2,
             y + height / 2,
+            width,
+            height,
             text,
             family,
             size,
             weight,
             isCenteredText
         )
-        this._width = width
-        this._height = height
     }
 
     public setText(text: string): void {
         this._text.setText(text)
     }
 
-    public update(inputHandler: InputHandler): void {
+    public updateButton(inputHandler: InputHandler, updateInput: UpdateInput): void {
+        super.updateButton(inputHandler, updateInput)
         if (
             (inputHandler.isClicked() &&
                 this.isHovered(inputHandler.mouse.x, inputHandler.mouse.y)) ||
@@ -49,8 +49,14 @@ class ButtonElement extends UIElement {
 
     public render(ctx: CanvasRenderingContext2D): void {
         if (!this.display) return
+        const position = this.getWorldPosition()
+        ctx.fillStyle = '#FFF'
+        ctx.fillRect(position.x, position.y, this._width, this._height)
+        ctx.strokeStyle = '#000'
+        ctx.lineWidth = 1
+        ctx.strokeRect(position.x, position.y, this._width, this._height)
         ctx.fillStyle = '#E06119'
-        ctx.fillRect(this.getPosition().x, this.getPosition().y, this._width, this._height)
+        ctx.fillRect(position.x + 5, position.y + 5, this._width - 10, this._height - 10)
         this._text.render(ctx)
     }
 

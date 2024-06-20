@@ -1,12 +1,12 @@
-import { BASE_SPEED, FADE_OUT_TIME } from "../../constants"
-import { InputHandler } from "../../../engine/inputs"
-import { ButtonElement, TextElement } from "../../../engine/user-interface"
-import { GameState } from "../../../types/state"
-import UpdateInput from "../../../types/update"
-import Canvas from "../../Canvas"
-import GameScene from "../../GameScene"
-import { PlayerAliveState } from "../player-states"
-import GameStartState from "./GameStartState"
+import { BASE_SPEED, FADE_OUT_TIME } from '../../constants'
+import { InputHandler } from '../../../engine/inputs'
+import { ButtonElement, TextElement } from '../../../engine/user-interface'
+import { GameState } from '../../../types/state'
+import UpdateInput from '../../../types/update'
+import Canvas from '../../Canvas'
+import GameScene from '../../GameScene'
+import { PlayerAliveState } from '../player-states'
+import GameStartState from './GameStartState'
 
 class GameHomeState implements GameState {
     private _start: number
@@ -16,7 +16,7 @@ class GameHomeState implements GameState {
     private _gameTitle: TextElement
     handleInput(game: GameScene): GameState | null {
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
-        if (inputHandler.isKeyDown('Space') && Date.now() > this._end) {
+        if (inputHandler.isKeyDown('Space') && Date.now() > this._end + 1000) {
             return new GameStartState()
         }
         return null
@@ -30,7 +30,7 @@ class GameHomeState implements GameState {
         })
         game.baseSpawner()
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
-        this._startButton.update(inputHandler)
+        this._startButton.updateButton(inputHandler, updateInput)
     }
 
     render(game: GameScene): void {
@@ -61,6 +61,8 @@ class GameHomeState implements GameState {
         game.player.setRotationSpeed(0)
         game.player.setRotationAcceleration(0)
         game.player.animation.play(true)
+        game.player.setPosition(75, 300)
+        game.scoreManager.resetScore()
         game.bases.children.forEach((base) => {
             base.setSpeed(BASE_SPEED)
         })
@@ -73,10 +75,10 @@ class GameHomeState implements GameState {
             500,
             170,
             50,
-            'Start',
-            'Courier New',
+            'START',
+            'Flappy Bird',
             20,
-            'bold',
+            '',
             true
         )
         const onClick = () => {
@@ -88,12 +90,15 @@ class GameHomeState implements GameState {
         this._gameTitle = new TextElement(
             canvas.canvas.width / 2,
             200,
+            100,
+            100,
             'Flappy Bird',
-            'Courier New',
+            'Flappy Bird',
             50,
-            'bold',
+            '',
             true
         )
+        this._gameTitle.textStroke = true
     }
     exit(game: GameScene): void {
         return

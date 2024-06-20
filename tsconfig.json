@@ -17,7 +17,7 @@
         "strictPropertyInitialization": false,
 
         "moduleResolution": "node",
-        "lib": ["dom", "esnext"]
+        "lib": ["dom", "esnext", "dom.iterable"]
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "**/*.spec.ts"],

@@ -3,7 +3,7 @@ import Canvas from './Canvas'
 import Obstacle from './Obstacle'
 import Player from './Player'
 import ScoreManager from './ScoreManager'
-import { GameHomeState } from './states/game-states'
+import { GameHomeState, GameLoadState } from './states/game-states'
 import { GameObject, TriggerObject } from '../engine/game-objects'
 import { Scene } from '../engine/scenes'
 import { Vector2 } from '../engine/utils'
@@ -14,6 +14,7 @@ import {
     PIPE_FLIP_SOURCE,
     PIPE_GAP,
     BASE_SPEED,
+    POINT_AUDIO,
 } from './constants'
 import { GameState } from '../types/state'
 import UpdateInput from '../types/update'
@@ -27,6 +28,8 @@ class GameScene extends Scene {
     public bases: GameObject
     public state: GameState
     public hitAudio: HTMLAudioElement
+    public pointAudio: HTMLAudioElement
+    public flapAudio: HTMLAudioElement
     public canvas: Canvas
     constructor(canvas: Canvas) {
         super()
@@ -40,7 +43,7 @@ class GameScene extends Scene {
         this.addGameObject(this.bases)
         this.obstacles = new GameObject(0, 0, BodyType.STATIC_BODY, 'Obstacles')
         this.addGameObject(this.obstacles)
-        this.state = new GameHomeState()
+        this.state = new GameLoadState()
         this.state.enter(this)
         this.initObstacle()
         for (let i = 0; i < 3; i++) {
@@ -51,8 +54,6 @@ class GameScene extends Scene {
             base.setDirection(new Vector2(-1, 0))
             base.setParent(this.bases)
         }
-        this.hitAudio = document.createElement('audio')
-        this.hitAudio.src = 'assets/audio/hit.wav'
         this.canvas = canvas
     }
 
@@ -83,6 +84,8 @@ class GameScene extends Scene {
             obstacle.setPosition(0, 0)
             invertedObstacle.setPosition(0, -invertedObstacle.getHeight() - PIPE_GAP)
             const trigger = new TriggerObject(104, PIPE_GAP, 0, -PIPE_GAP)
+            trigger.audio = this.pointAudio
+            console.log(this.pointAudio)
             parent.addChild(obstacle)
             parent.addChild(invertedObstacle)
             parent.addChild(trigger)

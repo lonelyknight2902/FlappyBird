@@ -48,7 +48,6 @@ class GamePlayState implements GameState {
                     .triggerUpdate([game.player]) === TriggerState.EXIT
             ) {
                 game.scoreManager.increaseScore()
-                game.scoreManager.update()
                 this._scoreText.setText(game.scoreManager.score.toString())
             }
         }
@@ -57,6 +56,8 @@ class GamePlayState implements GameState {
             if (game.player.collider.checkCollision(base.collider)) {
                 console.log('Base Collision detected')
                 // game.player.handleCollision(updateInput, base.collider))
+                const position = game.player.getPosition()
+                game.player.setPosition(position.x, base.getPosition().y - game.player.height)
                 collision = true
             }
         }
@@ -100,12 +101,15 @@ class GamePlayState implements GameState {
         this._scoreText = new TextElement(
             game.canvas.canvas.width / 2,
             200,
+            100,
+            100,
             game.scoreManager.score.toString(),
-            'Courier New',
+            'Flappy Bird',
             40,
-            'bold',
+            '',
             true
         )
+        this._scoreText.textStroke = true
         game.obstacles.children.forEach((obstacle) => {
             obstacle.setSpeed(BASE_SPEED)
         })

@@ -2,6 +2,7 @@ import { BoxCollider, Collider, Transform, Velocity } from '../components'
 import { Vector2 } from '../utils'
 import { BodyType, GRAVITAIONAL_ACCELERATION, TriggerState } from '../constants'
 import UpdateInput from '../../types/update'
+import { TransformAnimation } from '../animations'
 
 class GameObject {
     protected transform: Transform
@@ -14,6 +15,7 @@ class GameObject {
     public width: number
     public height: number
     public display = true
+    public transformAnimation: TransformAnimation | null = null
     constructor(width: number, height: number, bodyType: BodyType, name = 'GameObject') {
         this.transform = new Transform(0, 0, 0, 1)
         this.velocity = new Velocity()
@@ -58,6 +60,9 @@ class GameObject {
         this.children.forEach((child) => {
             child.update(updateInput)
         })
+        if (this.transformAnimation) {
+            this.transformAnimation.update(updateInput)
+        }
     }
 
     public triggerUpdate(objects: GameObject[]): TriggerState {
