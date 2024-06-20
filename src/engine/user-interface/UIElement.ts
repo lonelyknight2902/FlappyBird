@@ -34,6 +34,10 @@ class UIElement {
         return this._name
     }
 
+    public set borderWidth(width: number) {
+        this._borderWidth = width
+    }
+
     public set display(value: boolean) {
         this._display = value
     }
