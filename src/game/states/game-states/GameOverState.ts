@@ -18,6 +18,7 @@ class GameOverState implements GameState {
     private _highScoreTitleText: TextElement
     private _finalScoreText: TextElement
     private _highScoreText: TextElement
+    private _newHighScore: TextElement
     handleInput(game: GameScene): GameState | null {
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
         if (
@@ -68,6 +69,9 @@ class GameOverState implements GameState {
         this._finalScoreText.render(ctx)
         this._highScoreTitleText.render(ctx)
         this._highScoreText.render(ctx)
+        if (this._highScoreText.textAnimation && !this._highScoreText.textAnimation.isPlaying) {
+            this._newHighScore.render(ctx)
+        }
         let alpha: number
         if (Date.now() - this._start <= FLASH_IN_OUT_TIME / 2) {
             alpha = Math.min(1, (Date.now() - this._start) / FLASH_IN_OUT_TIME / 2)
@@ -112,7 +116,7 @@ class GameOverState implements GameState {
             (t: number) => Math.sin((t * Math.PI) / 2)
         )
         this._gameOverTitle.animation.play(FLASH_IN_OUT_TIME * 2)
-        this._resultDashboard = new UIElement(game.canvas.canvas.width / 2 - 60, 800, 120, 200)
+        this._resultDashboard = new UIElement(game.canvas.canvas.width / 2 - 60, 800, 120, 220)
         this._resultDashboard.backgroundColor = 'rgb(219, 218, 150)'
         this._finalScoreTitleText = new TextElement(
             this._resultDashboard.width / 2,
@@ -141,7 +145,7 @@ class GameOverState implements GameState {
         // this._finalScoreText.textAlign = 'right'
         this._highScoreTitleText = new TextElement(
             this._resultDashboard.width / 2,
-            this._resultDashboard.height - 75,
+            this._resultDashboard.height - 85,
             100,
             100,
             'BEST',
@@ -152,7 +156,7 @@ class GameOverState implements GameState {
         )
         this._highScoreText = new TextElement(
             this._resultDashboard.width / 2,
-            this._resultDashboard.height - 40,
+            this._resultDashboard.height - 50,
             100,
             100,
             game.scoreManager.highScore.toString(),
@@ -187,9 +191,23 @@ class GameOverState implements GameState {
             500,
             1000
         )
-        console.log(game.scoreManager.score)
-        console.log(game.scoreManager.highScore)
+        this._newHighScore = new TextElement(
+            this._resultDashboard.width / 2,
+            this._resultDashboard.height - 20,
+            30,
+            20,
+            'NEW',
+            'Flappy Bird',
+            10,
+            '',
+            true
+        )
+        this._resultDashboard.addChild(this._newHighScore)
+        this._newHighScore.parent = this._resultDashboard
+        this._newHighScore.backgroundColor = 'red'
+        this._newHighScore.display = false
         if (game.scoreManager.score > game.scoreManager.highScore) {
+            this._newHighScore.display = true
             console.log('New High Score')
             this._highScoreText.textAnimation = new TextAnimation(
                 game.scoreManager.highScore,
