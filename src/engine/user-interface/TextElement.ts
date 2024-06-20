@@ -51,7 +51,11 @@ class TextElement extends UIElement {
         const position = this.getWorldPosition()
         if (this.backgroundColor) {
             ctx.fillStyle = this.backgroundColor
-            ctx.fillRect(position.x, position.y, this._width, this._height)
+            if (this._isCentered) {
+                ctx.fillRect(position.x - this._width / 2, position.y - this._height / 2, this._width, this._height)
+            } else {
+                ctx.fillRect(position.x, position.y, this._width, this._height)
+            }
         }
         ctx.font = `${this._weight} ${this._size}px ${this._family}`
         ctx.fillStyle = this.color ? this.color : 'white'
