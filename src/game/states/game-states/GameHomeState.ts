@@ -16,7 +16,7 @@ class GameHomeState implements GameState {
     private _gameTitle: TextElement
     handleInput(game: GameScene): GameState | null {
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
-        if (inputHandler.isKeyDown('Space') && Date.now() > this._end) {
+        if (inputHandler.isKeyDown('Space') && Date.now() > this._end + 1000) {
             return new GameStartState()
         }
         return null
