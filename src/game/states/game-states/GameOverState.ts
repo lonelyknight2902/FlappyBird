@@ -25,9 +25,9 @@ class GameOverState implements GameState {
             (inputHandler.isKeyDown('Space') || inputHandler.isTouchStart()) &&
             Date.now() - this._start > 3000
         ) {
-            game.player.setPosition(75, 300)
-            game.initObstacle()
-            game.scoreManager.resetScore()
+            // game.player.setPosition(75, 300)
+            // game.initObstacle()
+            // game.scoreManager.resetScore()
             return new GameHomeState()
         }
         return null
@@ -45,6 +45,9 @@ class GameOverState implements GameState {
                 // game.player.handleCollision(updateInput, base.collider)
                 game.player.setSpeed(0)
             }
+        }
+        if (this._highScoreText.textAnimation && !this._highScoreText.textAnimation.isPlaying) {
+            this._newHighScore.display = true
         }
     }
 
@@ -118,6 +121,7 @@ class GameOverState implements GameState {
         this._gameOverTitle.animation.play(FLASH_IN_OUT_TIME * 2)
         this._resultDashboard = new UIElement(game.canvas.canvas.width / 2 - 60, 800, 120, 220)
         this._resultDashboard.backgroundColor = 'rgb(219, 218, 150)'
+        this._resultDashboard.borderWidth = 3
         this._finalScoreTitleText = new TextElement(
             this._resultDashboard.width / 2,
             50,
@@ -207,8 +211,6 @@ class GameOverState implements GameState {
         this._newHighScore.backgroundColor = 'red'
         this._newHighScore.display = false
         if (game.scoreManager.score > game.scoreManager.highScore) {
-            this._newHighScore.display = true
-            console.log('New High Score')
             this._highScoreText.textAnimation = new TextAnimation(
                 game.scoreManager.highScore,
                 game.scoreManager.score,
