@@ -200,11 +200,11 @@ class GameOverState implements GameState {
                 500,
                 1000
             )
-            this._highScoreText.textAnimation.play(FLASH_IN_OUT_TIME + 2000)
+            this._highScoreText.textAnimation.play(FLASH_IN_OUT_TIME + 1700)
             game.scoreManager.update()
         }
-        this._resultDashboard.animation.play(FLASH_IN_OUT_TIME + 1000)
-        this._finalScoreText.textAnimation.play(FLASH_IN_OUT_TIME + 1400)
+        this._resultDashboard.animation.play(FLASH_IN_OUT_TIME + 700)
+        this._finalScoreText.textAnimation.play(FLASH_IN_OUT_TIME + 1100)
         game.bases.children.forEach((base) => {
             base.setSpeed(0)
         })
