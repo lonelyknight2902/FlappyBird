@@ -2,13 +2,14 @@ import GameObject from './GameObject'
 import { Transform } from '../components'
 import { BodyType, TriggerState } from '../constants'
 import { POINT_AUDIO } from '../../game/constants'
+import { AudioPlayer } from '../audio'
 
 class TriggerObject extends GameObject {
     private _transform: Transform
     private _width: number
     private _height: number
     private _objectsInArea: GameObject[]
-    private _audio: HTMLAudioElement
+    private _audio: AudioPlayer
 
     constructor(width: number, height: number, x: number, y: number) {
         super(width, height, BodyType.STATIC_BODY)
@@ -23,7 +24,7 @@ class TriggerObject extends GameObject {
     }
 
     public set audio(audio: HTMLAudioElement) {
-        this._audio = audio
+        this._audio = new AudioPlayer(audio)
     }
 
     public triggerUpdate(objects: GameObject[]): TriggerState {
@@ -56,7 +57,8 @@ class TriggerObject extends GameObject {
     public onTriggerExit(object: GameObject) {
         console.log('TriggerObject onTriggerExit')
         this._objectsInArea = this._objectsInArea.filter((obj) => obj !== object)
-        this._audio?.play()
+        console.log('Play')
+        this._audio.play()
     }
     public onTriggerStay() {
         console.log('TriggerObject onTriggerStay')

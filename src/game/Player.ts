@@ -5,6 +5,7 @@ import { FLAP_AUDIO, FLAP_FORCE, FLAP_RATE } from './constants'
 import { PlayerState } from '../types/state'
 import UpdateInput from '../types/update'
 import { Animation } from '../engine/animations'
+import { AudioPlayer } from '../engine/audio'
 
 class Player extends GameObject {
     private _sprite: HTMLImageElement[]
@@ -12,7 +13,7 @@ class Player extends GameObject {
     private _spriteCycle: number[]
     private _frameCount: number
     private _currentFrame: number
-    private _flapAudio: HTMLAudioElement
+    private _flapAudio: AudioPlayer
     private _rotationSpeed: number
     private _rotationAcceleration: number
     private _flapped = false
@@ -63,7 +64,7 @@ class Player extends GameObject {
     }
 
     public set flapAudio(value: HTMLAudioElement) {
-        this._flapAudio = value
+        this._flapAudio = new AudioPlayer(value)
     }
 
     update(updateInput: UpdateInput): void {
@@ -99,10 +100,7 @@ class Player extends GameObject {
         this.setSpeed(-FLAP_FORCE)
         this.setRotation(-30)
         this.setRotationSpeed(0)
-        this._flapAudio.currentTime = 0
-        this._flapAudio.play().catch(function (error) {
-            console.log('Audio play was prevented:', error)
-        })
+        this._flapAudio.play()
     }
 
     unflap(): void {
