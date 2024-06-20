@@ -56,6 +56,8 @@ class GamePlayState implements GameState {
             if (game.player.collider.checkCollision(base.collider)) {
                 console.log('Base Collision detected')
                 // game.player.handleCollision(updateInput, base.collider))
+                const position = game.player.getPosition()
+                game.player.setPosition(position.x, base.getPosition().y - game.player.height)
                 collision = true
             }
         }
