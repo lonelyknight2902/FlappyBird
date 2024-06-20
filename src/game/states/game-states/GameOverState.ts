@@ -23,7 +23,7 @@ class GameOverState implements GameState {
         const inputHandler = InputHandler.getInstance(game.canvas.canvas)
         if (
             (inputHandler.isKeyDown('Space') || inputHandler.isTouchStart()) &&
-            Date.now() - this._start > 3000
+            Date.now() - this._start > 2500
         ) {
             // game.player.setPosition(75, 300)
             // game.initObstacle()
@@ -72,9 +72,7 @@ class GameOverState implements GameState {
         this._finalScoreText.render(ctx)
         this._highScoreTitleText.render(ctx)
         this._highScoreText.render(ctx)
-        if (this._highScoreText.textAnimation && !this._highScoreText.textAnimation.isPlaying) {
-            this._newHighScore.render(ctx)
-        }
+        this._newHighScore.render(ctx)
         let alpha: number
         if (Date.now() - this._start <= FLASH_IN_OUT_TIME / 2) {
             alpha = Math.min(1, (Date.now() - this._start) / FLASH_IN_OUT_TIME / 2)
@@ -93,17 +91,6 @@ class GameOverState implements GameState {
         game.player.state = new PlayerDeadState()
         console.log(game.player.state)
         game.player.state.enter(game.player)
-        // this._gameOverTitle = new TextElement(
-        //     game.canvas.canvas.width / 2,
-        //     200,
-        //     100,
-        //     100,
-        //     'Game Over',
-        //     'Courier New',
-        //     50,
-        //     'bold',
-        //     true
-        // )
         this._gameOverTitle = new ImageElement(
             game.canvas.canvas.width / 2 - (192 * 3) / 4,
             -200,
@@ -133,7 +120,6 @@ class GameOverState implements GameState {
             '',
             true
         )
-        // this._finalScoreTitleText.textAlign = 'right'
         this._finalScoreTitleText.color = '#E06119'
         this._finalScoreText = new TextElement(
             this._resultDashboard.width / 2,
@@ -146,7 +132,6 @@ class GameOverState implements GameState {
             '',
             true
         )
-        // this._finalScoreText.textAlign = 'right'
         this._highScoreTitleText = new TextElement(
             this._resultDashboard.width / 2,
             this._resultDashboard.height - 85,
@@ -169,8 +154,6 @@ class GameOverState implements GameState {
             '',
             true
         )
-        // this._highScoreText.textAlign = 'right'
-        // this._highScoreTitleText.textAlign = 'right'
         this._finalScoreText.textStroke = true
         this._highScoreText.textStroke = true
         this._highScoreTitleText.color = '#E06119'
