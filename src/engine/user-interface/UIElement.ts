@@ -107,6 +107,7 @@ class UIElement {
 
     public update(updateInput: UpdateInput): void {
         if (this.animation) this.animation.update(updateInput)
+        this._children.forEach((child) => child.update(updateInput))
     }
 
     public updateButton(inputHandler: InputHandler, updateInput: UpdateInput): void {
