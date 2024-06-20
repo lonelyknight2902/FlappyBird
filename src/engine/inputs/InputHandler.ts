@@ -50,9 +50,14 @@ class InputHandler {
             this._mouse.y = (e.clientY - bound.top) * scaleY
         })
 
-        window.addEventListener('click', (e) => {
+        window.addEventListener('mousedown', (e) => {
             e.preventDefault()
             this._mouseClick = true
+        })
+
+        window.addEventListener('mouseup', (e) => {
+            e.preventDefault()
+            this._mouseClick = false
         })
     }
 
