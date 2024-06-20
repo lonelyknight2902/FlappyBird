@@ -39,7 +39,6 @@ class GameOverState implements GameState {
         })
         this._gameOverTitle.update(updateInput)
         this._resultDashboard.update(updateInput)
-        this._finalScoreText.update(updateInput)
         for (const base of game.bases.children) {
             if (game.player.collider.checkCollision(base.collider)) {
                 // game.player.handleCollision(updateInput, base.collider)
@@ -65,7 +64,6 @@ class GameOverState implements GameState {
         })
         this._resultDashboard.render(ctx)
         this._gameOverTitle.render(ctx)
-        this._highScoreText.setText(game.scoreManager.highScore.toString())
         this._finalScoreTitleText.render(ctx)
         this._finalScoreText.render(ctx)
         this._highScoreTitleText.render(ctx)
@@ -189,6 +187,19 @@ class GameOverState implements GameState {
             500,
             1000
         )
+        console.log(game.scoreManager.score)
+        console.log(game.scoreManager.highScore)
+        if (game.scoreManager.score > game.scoreManager.highScore) {
+            console.log('New High Score')
+            this._highScoreText.textAnimation = new TextAnimation(
+                game.scoreManager.highScore,
+                game.scoreManager.score,
+                500,
+                1000
+            )
+            this._highScoreText.textAnimation.play(FLASH_IN_OUT_TIME + 2000)
+            game.scoreManager.update()
+        }
         this._resultDashboard.animation.play(FLASH_IN_OUT_TIME + 1000)
         this._finalScoreText.textAnimation.play(FLASH_IN_OUT_TIME + 1400)
         game.bases.children.forEach((base) => {

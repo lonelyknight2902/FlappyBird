@@ -48,7 +48,6 @@ class GamePlayState implements GameState {
                     .triggerUpdate([game.player]) === TriggerState.EXIT
             ) {
                 game.scoreManager.increaseScore()
-                game.scoreManager.update()
                 this._scoreText.setText(game.scoreManager.score.toString())
             }
         }
