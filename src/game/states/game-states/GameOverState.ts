@@ -44,6 +44,8 @@ class GameOverState implements GameState {
             if (game.player.collider.checkCollision(base.collider)) {
                 // game.player.handleCollision(updateInput, base.collider)
                 game.player.setSpeed(0)
+                game.player.setRotationAcceleration(0)
+                game.player.setRotationSpeed(0)
             }
         }
         if (this._highScoreText.textAnimation && !this._highScoreText.textAnimation.isPlaying) {
