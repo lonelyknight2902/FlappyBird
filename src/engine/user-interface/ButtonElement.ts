@@ -37,14 +37,18 @@ class ButtonElement extends UIElement {
 
     public updateButton(inputHandler: InputHandler, updateInput: UpdateInput): void {
         super.updateButton(inputHandler, updateInput)
-        if (
+        if (this.isClicked(inputHandler)) {
+            this._onClick()
+        }
+    }
+
+    public isClicked(inputHandler: InputHandler): boolean {
+        return (
             (inputHandler.isClicked() &&
                 this.isHovered(inputHandler.mouse.x, inputHandler.mouse.y)) ||
             (inputHandler.isTouchStart() &&
                 this.isHovered(inputHandler.touch.x, inputHandler.touch.y))
-        ) {
-            this._onClick()
-        }
+        )
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
@@ -57,6 +61,9 @@ class ButtonElement extends UIElement {
         ctx.strokeRect(position.x, position.y, this._width, this._height)
         ctx.fillStyle = '#E06119'
         ctx.fillRect(position.x + 5, position.y + 5, this._width - 10, this._height - 10)
+        // ctx.beginPath()
+        // ctx.roundRect(position.x + 5, position.y + 5, this._width - 10, this._height - 10, 100)
+        // ctx.fill()
         this._text.render(ctx)
     }
 
