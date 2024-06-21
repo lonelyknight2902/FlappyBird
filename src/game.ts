@@ -25,7 +25,7 @@ export class Game {
         requestAnimationFrame(() => this.loop())
         this.inputHandler = new InputHandler(this.canvas.canvas)
         this.lastFpsUpdate = window.performance.now()
-        this.fpsCounter = new TextElement(10, 10, 100, 100, 'FPS: 0', 'Arial', 10, 'normal')
+        this.fpsCounter = new TextElement(0, 10, 100, 100, 'FPS: 0', 'Arial', 10, 'normal')
     }
 
     processInput(): void {
